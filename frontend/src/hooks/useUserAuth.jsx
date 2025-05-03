@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
-import UserContext from '../context/UserContext'
+import {UserContext} from '../context/UserContext'
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 

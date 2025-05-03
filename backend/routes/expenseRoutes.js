@@ -3,11 +3,11 @@ const {addExpense, getAllExpenses, deleteExpense,downloadExpenseExcel} = require
 
 const { protect } = require('../middleware/authMiddleware.js');
 
-const incomeRouter = express.Router();
+const expenseRouter = express.Router();
 
-incomeRouter.post('/add', protect, addExpense);
-incomeRouter.get('/get', protect, getAllExpenses);
-incomeRouter.delete('/:id', protect, deleteExpense);
-incomeRouter.get('/download', protect, downloadExpenseExcel);
+expenseRouter.post('/add', protect, addExpense);
+expenseRouter.get('/get', protect, getAllExpenses);
+incomeexpenseRouterRouter.delete('/:id', protect, deleteExpense);
+expenseRouter.get('/download', protect, downloadExpenseExcel);
 
-module.exports = incomeRouter;
+module.exports = expenseRouter;

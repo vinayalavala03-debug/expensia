@@ -1,4 +1,4 @@
-export const BASE_URL = 'expense-tracker-backend-alavala-vinays-projects.vercel.app';
+export const BASE_URL = 'https://expense-tracker-back-eight.vercel.app';
 
 export const API_PATHS = {
   AUTH: {

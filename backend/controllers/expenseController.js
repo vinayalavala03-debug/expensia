@@ -5,31 +5,30 @@ const fs = require('fs');
 
 const Expense = require('../models/Expense.js');
 //add expense
-// In expenseController.js
 exports.addExpense = async (req, res) => {
     const userId = req.user.id;
     try {
-        const { icon, source, amount, date } = req.body;
+        const {icon, category, amount, date} = req.body;
 
-        if (!source || !amount || !date) {
+        if(!icon || !category || !amount || !date) {
             return res.status(400).json({ message: 'Please fill all fields' });
         }
 
-        const newExpense = new Expense({  // <-- Make sure this is Expense, not Income
+        const newExpense = new Expense({
             userId,
             icon,
-            source,
+            category,
             amount,
-            date: new Date(date)
+            date
         });
 
         await newExpense.save();
 
-        return res.status(201).json({ data: newExpense });
+        return res.status(201).json({ message: 'Expense added successfully', data: newExpense });
     } catch (error) {
-        return res.status(500).json({ message: 'Server error', error });
+        return res.status(500).json({ message: 'Server error' });
     }
-};
+}
 
 //get all expenses
 exports.getAllExpenses = async (req, res) => {

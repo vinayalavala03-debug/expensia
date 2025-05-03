@@ -26,7 +26,7 @@ const Calculator = () => {
     
     <DashboardLayout activeMenu="Calculator">
       <div className="my-5 mx-auto">
-      <div className="flex items-center justify-center h-screen bg-gray-900">
+      <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="bg-gray-200 rounded-lg p-4 w-full max-w-sm mx-auto text-white">
       <input
         type="text"

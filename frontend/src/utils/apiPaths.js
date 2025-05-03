@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://expense-tracker-backend-lilac-psi.vercel.app';
+export const BASE_URL = 'https://vinayexpensebackend.vercel.app';
 
 export const API_PATHS = {
   AUTH: {

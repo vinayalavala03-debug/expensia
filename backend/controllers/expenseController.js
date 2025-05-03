@@ -8,19 +8,10 @@ const Expense = require('../models/Expense.js');
 exports.addIncome = async (req, res) => {
     const userId = req.user.id;
     try {
-        const { icon, source, amount, date } = req.body;
+        const {icon, source, amount, date} = req.body;
 
-        if (!source || !amount || !date) {
+        if( !source || !amount || !date) {
             return res.status(400).json({ message: 'Please fill all fields' });
-        }
-
-        const incomeDate = new Date(date);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Normalize today's date for comparison
-        incomeDate.setHours(0, 0, 0, 0); // Normalize input date for comparison
-
-        if (incomeDate > today) {
-            return res.status(400).json({ message: 'Date cannot be in the future' });
         }
 
         const newIncome = new Income({
@@ -28,16 +19,16 @@ exports.addIncome = async (req, res) => {
             icon,
             source,
             amount,
-            date: incomeDate
+            date:new Date(date)
         });
 
         await newIncome.save();
 
-        return res.status(201).json({ data: newIncome });
+        return res.status(201).json({  data: newIncome });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error });
     }
-};
+}
 
 //get all expenses
 exports.getAllExpenses = async (req, res) => {

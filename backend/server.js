@@ -10,7 +10,7 @@ const { connectDB } = require('./config/db.js');
 
 const app = express();
 
-const allowedOrigin = 'https://expense-s-tracker.vercel.app';
+const allowedOrigin = 'https://vinay-expense-front.vercel.app';
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', allowedOrigin);

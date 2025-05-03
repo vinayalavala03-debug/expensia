@@ -10,9 +10,12 @@ const { connectDB } = require('./config/db.js');
 
 const app = express();
 
+// Set default frontend URL if not in env
+const defaultClientURL = 'https://vinay-expense-front.vercel.app';
+
 app.use(cors({
   origin: function (origin, callback) {
-    const allowedOrigin = process.env.CLIENT_URL;
+    const allowedOrigin = defaultClientURL;
     if (!origin || origin === allowedOrigin) {
       callback(null, true);
     } else {
@@ -24,18 +27,14 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-
-
-
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 connectDB();
 
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
-app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/income', incomeRoutes);

@@ -10,22 +10,19 @@ const { connectDB } = require('./config/db.js');
 
 const app = express();
 
-// Set default frontend URL if not in env
-const defaultClientURL = 'https://vinay-expense-front.vercel.app';
+const allowedOrigin = 'https://vinay-expense-front.vercel.app';
 
 app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigin = defaultClientURL;
-    if (!origin || origin === allowedOrigin) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS Error: Origin ${origin} not allowed`));
-    }
-  },
+  origin: allowedOrigin,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
+// Handle preflight OPTIONS requests globally
+app.options('*', cors({
+  origin: allowedOrigin,
+  credentials: true,
+}));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

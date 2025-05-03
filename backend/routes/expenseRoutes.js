@@ -7,7 +7,7 @@ const expenseRouter = express.Router();
 
 expenseRouter.post('/add', protect, addExpense);
 expenseRouter.get('/get', protect, getAllExpenses);
-incomeexpenseRouterRouter.delete('/:id', protect, deleteExpense);
+expenseRouter.delete('/:id', protect, deleteExpense);
 expenseRouter.get('/download', protect, downloadExpenseExcel);
 
 module.exports = expenseRouter;

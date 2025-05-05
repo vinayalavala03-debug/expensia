@@ -5,7 +5,7 @@ const CustomTooltip = ({active,payload}) => {
     return (
       <div className='bg-white p-2 rounded-lg border border-gray-300 shadow-md'>
         <p className='text-xs font-semibold  text-purple-800 mb-1'>{payload[0].name}</p>
-        <p className='text-sm text-gray-600'>Amount: <span className='text-sm font-medium text-gray-900'>${payload[0].value}</span></p>
+        <p className='text-sm text-gray-600'>Amount: <span className='text-sm font-medium text-gray-900'>₹{payload[0].value}</span></p>
       </div>
     )
   }

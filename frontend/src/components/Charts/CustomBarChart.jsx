@@ -26,7 +26,7 @@ const CustomBarChart = ({data}) => {
           <p className="text-sm text-gray-600">Amount: <span className='text-sm font-medium text-gray-900'>₹{payload[0].payload.amount}</span></p>
           <p className="text-sm text-gray-600">Date: <span className='text-sm font-medium text-gray-900'>{payload[0].payload.date}</span></p>
         </div>
-      );
+      ); 
     }
     return null;
   }

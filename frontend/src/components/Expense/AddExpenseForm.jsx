@@ -2,6 +2,16 @@ import React, { useState } from 'react'
 import Input from '../Inputs/Input'
 import EmojiPickerPopup from '../EmojiPickerPopup'
 
+const categories = [
+  "Food",
+  "Transport",
+  "Shopping",
+  "Bills",
+  "Entertainment",
+  "Health",
+  "Other"
+]
+
 const AddExpenseForm = ({ onAddExpense }) => {
   const [expense, setExpense] = useState({
     category: '',
@@ -9,6 +19,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
     date: '',
     icon: '',
   })
+  const [isCustomCategory, setIsCustomCategory] = useState(false)
 
   const handleChange = (key, value) => {
     setExpense(prev => ({
@@ -17,20 +28,50 @@ const AddExpenseForm = ({ onAddExpense }) => {
     }))
   }
 
+  const handleSubmit = () => {
+    onAddExpense(expense)
+  }
+
   return (
     <div>
       <EmojiPickerPopup
         icon={expense.icon}
-        onSelect={(icon)=>handleChange("icon",icon)}
-        />
-
-      <Input
-        label="Category"
-        value={expense.category}
-        onChange={({ target }) => handleChange('category', target.value)}
-        placeholder="Enter category like food, travel, etc"
-        type="text"
+        onSelect={(icon) => handleChange("icon", icon)}
       />
+
+      {/* Category: dropdown or input in the same place */}
+      {!isCustomCategory ? (
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <select
+            value={expense.category}
+            onChange={(e) => {
+              const value = e.target.value
+              if (value === "Other") {
+                setIsCustomCategory(true)   // switch to input
+                handleChange("category", "")
+              } else {
+                handleChange("category", value)
+              }
+            }}
+            className="w-full border border-gray-300 rounded-md p-2"
+            required
+          >
+            <option value="">Select category</option>
+            {categories.map((cat, i) => (
+              <option key={i} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+      ) : (
+        <Input
+          label="Category"
+          value={expense.category}
+          onChange={({ target }) => handleChange('category', target.value)}
+          placeholder="Enter custom category"
+          type="text"
+        />
+      )}
 
       <Input
         label="Amount"
@@ -44,7 +85,6 @@ const AddExpenseForm = ({ onAddExpense }) => {
         label="Date"
         value={expense.date}
         onChange={({ target }) => handleChange('date', target.value)}
-        placeholder=""
         type="date"
       />
 
@@ -52,7 +92,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
         <button
           type="button"
           className="add-btn add-btn-fill"
-          onClick={() => onAddExpense(expense)}
+          onClick={handleSubmit}
         >
           Add Expense
         </button>

@@ -7,13 +7,14 @@ const upload = require('../middleware/uploadMiddleware.js');
 authRouter.post('/register', registerUser);
 authRouter.post('/login', loginUser);
 authRouter.get('/getuser',protect, getUserInfo);
-authRouter.post('/upload-image', upload.single("image"), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    res.status(200).json({ imageUrl });
+authRouter.post("/upload-image", upload.single("image"), async (req, res) => {
+  try {
+    // Cloudinary stores the URL in req.file.path
+    res.json({ imageUrl: req.file.path });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({ error: "Image upload failed" });
+  }
 });
 
 

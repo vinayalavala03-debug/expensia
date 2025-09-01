@@ -1,7 +1,7 @@
 import React from 'react';
 import { LuUtensils, LuTrendingUp, LuTrendingDown, LuTrash2 } from 'react-icons/lu';
 
-const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn,onDelete }) => {
+const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn,onDelete, description }) => {
 
   const getAmountStyles = () => {
     if (type === 'income') {
@@ -32,6 +32,7 @@ const TransactionInfoCard = ({ title, icon, date, amount, type, hideDeleteBtn,on
       {/* Transaction details */}
       <div className='flex-1 flex-col items-center justify-between'>
         <h6 className='text-sm font-medium text-gray-700'>{title}</h6>
+        <p className='text-xs text-gray-400 mt-1'>{description}</p>
         <p className='text-xs text-gray-400 mt-1'>{date}</p>
       </div>
 

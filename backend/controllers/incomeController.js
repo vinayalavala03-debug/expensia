@@ -7,7 +7,7 @@ const Income = require('../models/Income.js');
 exports.addIncome = async (req, res) => {
     const userId = req.user.id;
     try {
-        const {icon, source, amount, date} = req.body;
+        const {icon, source, amount, date, description} = req.body;
 
         if( !source || !amount || !date) {
             return res.status(400).json({ message: 'Please fill all fields' });
@@ -18,6 +18,7 @@ exports.addIncome = async (req, res) => {
             icon,
             source,
             amount,
+            description
             date:new Date(date)
         });
 

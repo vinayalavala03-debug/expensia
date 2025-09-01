@@ -11,7 +11,7 @@ const { connectDB } = require('./config/db.js');
 
 const app = express();
 
-const allowedOrigin = 'http://localhost:5173';
+const allowedOrigin = 'https://expensia.vercel.app';
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', allowedOrigin);

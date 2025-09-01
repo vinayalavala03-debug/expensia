@@ -3,7 +3,7 @@ import DashboardLayout from "./DashboardLayout";
 import { useUserAuth } from "../../hooks/useUserAuth";
 
 const Calculator = () => {
-  useUserAuth()
+  useUserAuth();
   const [input, setInput] = useState("");
 
   const handleClick = (value) => {
@@ -12,6 +12,10 @@ const Calculator = () => {
 
   const handleClear = () => {
     setInput("");
+  };
+
+  const handleBackspace = () => {
+    setInput((prev) => prev.slice(0, -1));
   };
 
   const handleCalculate = () => {
@@ -23,45 +27,88 @@ const Calculator = () => {
   };
 
   return (
-    
     <DashboardLayout activeMenu="Calculator">
-      <div className="my-5 mx-auto">
-      <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-gray-200 rounded-lg p-4 w-full max-w-sm mx-auto text-white">
-      <input
-        type="text"
-        value={input}
-        readOnly
-        className="w-full mb-4 p-3 rounded-lg bg-gray-800 text-white text-right text-xl outline-none"
-      />
+      <div className="flex items-center justify-center min-h-[80vh] p-4">
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 shadow-xl rounded-3xl p-6 w-full max-w-sm">
+          {/* Title */}
+          <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+            Expensia Calculator
+          </h2>
 
-      <div className="grid grid-cols-4 gap-3">
-        {["7", "8", "9", "/",
-          "4", "5", "6", "*",
-          "1", "2", "3", "-",
-          "0", ".", "=", "+"].map((val) => (
-          <button
-            key={val}
-            onClick={() =>
-              val === "=" ? handleCalculate() : handleClick(val)
-            }
-            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold text-lg py-3 rounded-lg transition-all duration-200"
-          >
-            {val}
-          </button>
-        ))}
-        <button
-          onClick={handleClear}
-          className="col-span-4 bg-red-500 hover:bg-red-600 text-white font-semibold text-lg py-3 rounded-lg transition-all duration-200"
-        >
-          Clear
-        </button>
-      </div>
-    </div>
-    </div>
+          {/* Display */}
+          <div className="mb-6">
+            <input
+              type="text"
+              value={input}
+              readOnly
+              className="w-full p-4 rounded-2xl bg-white shadow-inner text-gray-900 text-right text-3xl font-bold tracking-wide outline-none border border-gray-200"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="grid grid-cols-4 gap-4">
+            {[
+              "7",
+              "8",
+              "9",
+              "÷",
+              "4",
+              "5",
+              "6",
+              "×",
+              "1",
+              "2",
+              "3",
+              "−",
+              "0",
+              ".",
+              "=",
+              "+",
+            ].map((val) => (
+              <button
+                key={val}
+                onClick={() =>
+                  val === "="
+                    ? handleCalculate()
+                    : handleClick(
+                        val
+                          .replace("÷", "/")
+                          .replace("×", "*")
+                          .replace("−", "-")
+                          .replace("+", "+")
+                      )
+                }
+                className={`${
+                  val === "="
+                    ? "bg-purple-600 text-white hover:bg-purple-700"
+                    : ["÷", "×", "−", "+"].includes(val)
+                    ? "bg-purple-200 text-purple-900 hover:bg-purple-300"
+                    : "bg-white text-gray-800 hover:bg-gray-100"
+                } font-semibold text-xl py-4 rounded-2xl shadow-md transition-all duration-200 active:scale-95`}
+              >
+                {val}
+              </button>
+            ))}
+
+            {/* Backspace Button */}
+            <button
+              onClick={handleBackspace}
+              className="col-span-2 bg-purple-500 hover:bg-purple-600 text-white font-bold text-lg py-4 rounded-2xl shadow-md transition-all duration-200 active:scale-95"
+            >
+              ⌫ Backspace
+            </button>
+
+            {/* Clear Button */}
+            <button
+              onClick={handleClear}
+              className="col-span-2 bg-red-500 hover:bg-red-600 text-white font-bold text-lg py-4 rounded-2xl shadow-md transition-all duration-200 active:scale-95"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
-    
   );
 };
 

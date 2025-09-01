@@ -18,7 +18,7 @@ exports.addIncome = async (req, res) => {
             icon,
             source,
             amount,
-            description
+            description,
             date:new Date(date)
         });
 

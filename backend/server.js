@@ -6,11 +6,12 @@ const authRoutes = require('./routes/authRoutes.js');
 const incomeRoutes = require('./routes/incomeRoutes.js');
 const expenseRoutes = require('./routes/expenseRoutes.js');
 const dashboardRoutes = require('./routes/dashboardRoutes.js');
+const tripRoutes = require('./routes/tripRoutes.js')
 const { connectDB } = require('./config/db.js');
 
 const app = express();
 
-const allowedOrigin = 'https://expensia.vercel.app';
+const allowedOrigin = 'http://localhost:5173';
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', allowedOrigin);
@@ -39,6 +40,8 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/income', incomeRoutes);
 app.use('/api/v1/expense', expenseRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/trips', tripRoutes);
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 4000;

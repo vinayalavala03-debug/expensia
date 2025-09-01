@@ -14,6 +14,14 @@ import toast from "react-hot-toast";
 import CustomBarChart from "../../components/Charts/CustomBarChart";
 import CustomLineChart from "../../components/Charts/CustomLineChart";
 
+// ✅ Import Icons
+import { IoMdCard } from "react-icons/io";
+import { LuWalletMinimal, LuHandCoins } from "react-icons/lu";
+
+// ✅ Utility for thousand separator
+const addThousandSeparator = (num) =>
+  num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
 const TripDetails = () => {
   const { id } = useParams();
   const [trip, setTrip] = useState(null);
@@ -55,45 +63,73 @@ const TripDetails = () => {
     fetchTripDetails();
   }, [id]);
 
-  // ✅ Ensure safe fallback values
-  const totalIncome = trip?.incomes?.reduce((acc, i) => acc + i.amount, 0) || 0;
-  const totalExpenses = trip?.expenses?.reduce((acc, e) => acc + e.amount, 0) || 0;
+  // ✅ Calculate totals (safe defaults if trip not loaded yet)
+  const totalIncome =
+    trip?.incomes?.reduce((acc, i) => acc + i.amount, 0) || 0;
+  const totalExpenses =
+    trip?.expenses?.reduce((acc, e) => acc + e.amount, 0) || 0;
   const balance = totalIncome - totalExpenses;
 
   return (
     <DashboardLayout activeMenu="Trips">
-      <div className="my-6 mx-auto max-w-5xl space-y-10">
+      <div className="my-6 mx-auto max-w-6xl space-y-10">
         {/* Trip Header */}
         {trip && (
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-2xl font-bold mb-1">{trip.name}</h2>
             <p className="text-gray-600 text-sm">{trip.destination}</p>
             <p className="text-xs text-gray-400">
-              {trip.startDate && new Date(trip.startDate).toLocaleDateString()} –{" "}
-              {trip.endDate && new Date(trip.endDate).toLocaleDateString()}
+              {new Date(trip.startDate).toLocaleDateString()} –{" "}
+              {new Date(trip.endDate).toLocaleDateString()}
             </p>
           </div>
         )}
 
-        {/* ✅ Summary Box */}
+        {/* ✅ Summary Cards with Icon Backgrounds */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-green-50 rounded-lg shadow p-6 text-center">
-            <h4 className="text-lg font-semibold text-green-700">Total Income</h4>
-            <p className="text-2xl font-bold text-green-800">₹{totalIncome}</p>
+          {/* Balance */}
+          <div className="flex items-center bg-white rounded-lg shadow-md p-6 space-x-4">
+            <div className="bg-primary text-white p-3 rounded-full">
+              <IoMdCard className="text-2xl" />
+            </div>
+            <div>
+              <h4 className="text-base font-medium text-gray-600">
+                Total Balance
+              </h4>
+              <p className="text-xl font-bold text-gray-900">
+                ₹{addThousandSeparator(balance)}
+              </p>
+            </div>
           </div>
-          <div className="bg-red-50 rounded-lg shadow p-6 text-center">
-            <h4 className="text-lg font-semibold text-red-700">Total Expenses</h4>
-            <p className="text-2xl font-bold text-red-800">₹{totalExpenses}</p>
+
+          {/* Income */}
+          <div className="flex items-center bg-white rounded-lg shadow-md p-6 space-x-4">
+            <div className="bg-orange-500 text-white p-3 rounded-full">
+              <LuWalletMinimal className="text-2xl" />
+            </div>
+            <div>
+              <h4 className="text-base font-medium text-gray-600">
+                Total Income
+              </h4>
+              <p className="text-xl font-bold text-gray-900">
+                ₹{addThousandSeparator(totalIncome)}
+              </p>
+            </div>
           </div>
-          <div className="bg-blue-50 rounded-lg shadow p-6 text-center">
-            <h4 className="text-lg font-semibold text-blue-700">Balance</h4>
-            <p
-              className={`text-2xl font-bold ${
-                balance >= 0 ? "text-blue-800" : "text-red-800"
-              }`}
-            >
-              ₹{balance}
-            </p>
+
+          {/* Expenses */}
+          <div className="flex items-center bg-white rounded-lg shadow-md p-6 space-x-4">
+            <div className="bg-red-500 text-white p-3 rounded-full">
+              <LuHandCoins className="text-2xl" />
+            </div>
+            <div>
+              <h4 className="text-base font-medium text-gray-600">
+                Total Expenses
+              </h4>
+              <p className="text-xl font-bold text-gray-900">
+                ₹{addThousandSeparator(totalExpenses)}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -101,7 +137,7 @@ const TripDetails = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h3 className="text-xl font-semibold">Expenses</h3>
+              <h3 className="text-lg font-semibold">Expenses</h3>
               <p className="text-gray-500 text-sm">Track your spending</p>
             </div>
             <button
@@ -125,7 +161,7 @@ const TripDetails = () => {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h3 className="text-xl font-semibold">Income</h3>
+              <h3 className="text-lg font-semibold">Income</h3>
               <p className="text-gray-500 text-sm">Monitor your earnings</p>
             </div>
             <button

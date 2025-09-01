@@ -5,6 +5,7 @@ import { useUserAuth } from "../../hooks/useUserAuth";
 const Calculator = () => {
   useUserAuth();
   const [input, setInput] = useState("");
+  const [history, setHistory] = useState([]); // store past calculations
 
   const handleClick = (value) => {
     setInput((prev) => prev + value);
@@ -20,7 +21,9 @@ const Calculator = () => {
 
   const handleCalculate = () => {
     try {
-      setInput(eval(input).toString());
+      const result = eval(input).toString();
+      setHistory((prev) => [...prev, `${input} = ${result}`]); // save history
+      setInput(result);
     } catch {
       setInput("Error");
     }
@@ -28,7 +31,7 @@ const Calculator = () => {
 
   return (
     <DashboardLayout activeMenu="Calculator">
-      <div className="flex items-center justify-center min-h-[80vh] p-4">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 space-y-6">
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 shadow-xl rounded-3xl p-6 w-full max-w-sm">
           {/* Title */}
           <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
@@ -106,6 +109,25 @@ const Calculator = () => {
               Clear
             </button>
           </div>
+        </div>
+
+        {/* History Panel */}
+        <div className="bg-white shadow-lg rounded-2xl p-4 w-full max-w-sm h-48 overflow-y-auto">
+          <h3 className="text-md font-semibold text-gray-700 mb-2">History</h3>
+          {history.length === 0 ? (
+            <p className="text-gray-400 text-sm text-center">No history yet</p>
+          ) : (
+            <ul className="space-y-1 text-sm text-gray-800">
+              {history.map((item, idx) => (
+                <li
+                  key={idx}
+                  className="flex justify-between border-b pb-1 text-gray-600"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </DashboardLayout>

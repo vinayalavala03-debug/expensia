@@ -55,25 +55,25 @@ const TripDetails = () => {
     fetchTripDetails();
   }, [id]);
 
-  if (!trip) return <p>Loading...</p>;
-
-  // ✅ Calculate totals
-  const totalIncome = trip.incomes?.reduce((acc, i) => acc + i.amount, 0) || 0;
-  const totalExpenses = trip.expenses?.reduce((acc, e) => acc + e.amount, 0) || 0;
+  // ✅ Ensure safe fallback values
+  const totalIncome = trip?.incomes?.reduce((acc, i) => acc + i.amount, 0) || 0;
+  const totalExpenses = trip?.expenses?.reduce((acc, e) => acc + e.amount, 0) || 0;
   const balance = totalIncome - totalExpenses;
 
   return (
     <DashboardLayout activeMenu="Trips">
       <div className="my-6 mx-auto max-w-5xl space-y-10">
         {/* Trip Header */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold mb-1">{trip.name}</h2>
-          <p className="text-gray-600 text-sm">{trip.destination}</p>
-          <p className="text-xs text-gray-400">
-            {new Date(trip.startDate).toLocaleDateString()} –{" "}
-            {new Date(trip.endDate).toLocaleDateString()}
-          </p>
-        </div>
+        {trip && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-2xl font-bold mb-1">{trip.name}</h2>
+            <p className="text-gray-600 text-sm">{trip.destination}</p>
+            <p className="text-xs text-gray-400">
+              {trip.startDate && new Date(trip.startDate).toLocaleDateString()} –{" "}
+              {trip.endDate && new Date(trip.endDate).toLocaleDateString()}
+            </p>
+          </div>
+        )}
 
         {/* ✅ Summary Box */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -114,11 +114,11 @@ const TripDetails = () => {
 
           {/* Chart */}
           <div className="mb-6">
-            <CustomLineChart data={trip.expenses || []} />
+            <CustomLineChart data={trip?.expenses || []} />
           </div>
 
           {/* List */}
-          <ExpenseList transactions={trip.expenses || []} onDelete={() => {}} />
+          <ExpenseList transactions={trip?.expenses || []} onDelete={() => {}} />
         </div>
 
         {/* Income Section */}
@@ -138,11 +138,11 @@ const TripDetails = () => {
 
           {/* Chart */}
           <div className="mb-6">
-            <CustomBarChart data={trip.incomes || []} />
+            <CustomBarChart data={trip?.incomes || []} />
           </div>
 
           {/* List */}
-          <IncomeList transactions={trip.incomes || []} onDelete={() => {}} />
+          <IncomeList transactions={trip?.incomes || []} onDelete={() => {}} />
         </div>
 
         {/* Modals */}

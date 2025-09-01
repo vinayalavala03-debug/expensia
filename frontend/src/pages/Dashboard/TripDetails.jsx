@@ -88,7 +88,7 @@ const TripDetails = () => {
         {/* ✅ Summary Cards with Icon Backgrounds */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Balance */}
-          <div className="flex items-center bg-white rounded-lg shadow-md p-6 space-x-4">
+          <div className="flex items-center bg-white rounded-lg border border-gray-200 p-6 space-x-4">
             <div className="bg-primary text-white p-3 rounded-full">
               <IoMdCard className="text-2xl" />
             </div>
@@ -103,7 +103,7 @@ const TripDetails = () => {
           </div>
 
           {/* Income */}
-          <div className="flex items-center bg-white rounded-lg shadow-md p-6 space-x-4">
+          <div className="flex items-center bg-white rounded-lg border border-gray-200 p-6 space-x-4">
             <div className="bg-orange-500 text-white p-3 rounded-full">
               <LuWalletMinimal className="text-2xl" />
             </div>
@@ -118,7 +118,7 @@ const TripDetails = () => {
           </div>
 
           {/* Expenses */}
-          <div className="flex items-center bg-white rounded-lg shadow-md p-6 space-x-4">
+          <div className="flex items-center bg-white rounded-lg border border-gray-200 p-6 space-x-4">
             <div className="bg-red-500 text-white p-3 rounded-full">
               <LuHandCoins className="text-2xl" />
             </div>

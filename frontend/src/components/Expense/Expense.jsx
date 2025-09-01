@@ -58,6 +58,7 @@ const Expense = () => {
           category,
           amount,
           date,
+          description: expense.description || 'No description', // Use provided description or default
           icon
         })
         setOpenAddExpenseModal(false)  // Close the modal after adding expense

@@ -39,55 +39,65 @@ const Trip = () => {
   return (
     <DashboardLayout activeMenu="Trips">
       <div className="my-8 mx-auto max-w-6xl">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Your Trips</h2>
-          <button
-            className="add-btn add-btn-fill flex items-center gap-2 px-4 py-2"
-            onClick={() => setOpenAddTripModal(true)}
-          >
-            <PlusCircle size={20} />
-            Add Trip
-          </button>
+        {/* Card Container */}
+        <div className="bg-white rounded-2xl shadow p-6">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Trip Overview
+              </h2>
+              <p className="text-sm text-gray-500">
+                Manage and track your travel plans easily.
+              </p>
+            </div>
+            <button
+              className="add-btn"
+              onClick={() => setOpenAddTripModal(true)}
+            >
+              <PlusCircle size={18} />
+              Add Trip
+            </button>
+          </div>
+
+          {/* Trips List */}
+          {trips.length === 0 ? (
+            <div className="text-center py-12 text-gray-500 bg-gray-50 rounded-lg shadow-inner">
+              <p className="text-base font-medium">No trips yet</p>
+              <p className="text-sm">
+                Click on <span className="font-semibold">"Add Trip"</span> to
+                start planning.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {trips.map((trip) => (
+                <Link
+                  key={trip._id}
+                  to={`/dashboard/trips/${trip._id}`}
+                  className="group bg-gray-50 rounded-xl shadow p-5 hover:shadow-md transition border border-gray-200"
+                >
+                  <h3 className="text-base font-semibold text-gray-800 group-hover:text-primary transition">
+                    {trip.name}
+                  </h3>
+
+                  <div className="flex items-center gap-2 text-gray-600 mt-2 text-sm">
+                    <MapPin size={14} className="text-primary" />
+                    <p>{trip.destination}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-500 mt-1 text-sm">
+                    <CalendarDays size={14} className="text-primary" />
+                    <p>
+                      {new Date(trip.startDate).toLocaleDateString()} –{" "}
+                      {new Date(trip.endDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-
-        {/* Trips List */}
-        {trips.length === 0 ? (
-          <div className="text-center py-12 text-gray-500 bg-gray-50 rounded-lg shadow-inner">
-            <p className="text-lg font-medium">No trips yet</p>
-            <p className="text-sm">
-              Click on <span className="font-semibold">"Add Trip"</span> to
-              start planning.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trips.map((trip) => (
-              <Link
-                key={trip._id}
-                to={`/dashboard/trips/${trip._id}`}
-                className="group bg-white rounded-xl shadow p-6 hover:shadow-lg transition border border-gray-200"
-              >
-                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-primary transition">
-                  {trip.name}
-                </h3>
-
-                <div className="flex items-center gap-2 text-gray-600 mt-2">
-                  <MapPin size={16} className="text-primary" />
-                  <p className="text-sm">{trip.destination}</p>
-                </div>
-
-                <div className="flex items-center gap-2 text-gray-500 mt-1 text-sm">
-                  <CalendarDays size={16} className="text-primary" />
-                  <p>
-                    {new Date(trip.startDate).toLocaleDateString()} –{" "}
-                    {new Date(trip.endDate).toLocaleDateString()}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
 
         {/* Modal */}
         <Modal

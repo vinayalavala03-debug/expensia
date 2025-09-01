@@ -141,7 +141,7 @@ const TripDetails = () => {
               <p className="text-gray-500 text-sm">Track your spending</p>
             </div>
             <button
-              className="add-btn add-btn-fill"
+              className="add-btn"
               onClick={() => setOpenExpenseModal(true)}
             >
               + Add Expense
@@ -165,7 +165,7 @@ const TripDetails = () => {
               <p className="text-gray-500 text-sm">Monitor your earnings</p>
             </div>
             <button
-              className="add-btn add-btn-fill"
+              className="add-btn"
               onClick={() => setOpenIncomeModal(true)}
             >
               + Add Income

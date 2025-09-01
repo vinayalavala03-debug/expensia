@@ -15,6 +15,11 @@ const incomeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        default: "No description",
+        required: true
+    },
     amount: {
         type: Number,
         required: true

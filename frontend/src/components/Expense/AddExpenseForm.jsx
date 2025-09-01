@@ -18,6 +18,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
     amount: '',
     date: '',
     icon: '',
+    description: ''   // ✅ new optional field
   })
   const [isCustomCategory, setIsCustomCategory] = useState(false)
 
@@ -64,13 +65,25 @@ const AddExpenseForm = ({ onAddExpense }) => {
           </select>
         </div>
       ) : (
-        <Input
-          label="Category"
-          value={expense.category}
-          onChange={({ target }) => handleChange('category', target.value)}
-          placeholder="Enter custom category"
-          type="text"
-        />
+        <div className="mb-4">
+          <Input
+            label="Category"
+            value={expense.category}
+            onChange={({ target }) => handleChange('category', target.value)}
+            placeholder="Enter custom category"
+            type="text"
+          />
+          <button
+            type="button"
+            className="text-sm text-blue-500 underline mt-1"
+            onClick={() => {
+              setIsCustomCategory(false)
+              handleChange("category", "")
+            }}
+          >
+            ← Back to categories
+          </button>
+        </div>
       )}
 
       <Input
@@ -86,6 +99,15 @@ const AddExpenseForm = ({ onAddExpense }) => {
         value={expense.date}
         onChange={({ target }) => handleChange('date', target.value)}
         type="date"
+      />
+
+      {/* ✅ Optional Description Field */}
+      <Input
+        label="Description (optional)"
+        value={expense.description}
+        onChange={({ target }) => handleChange('description', target.value)}
+        placeholder="Add a note (optional)"
+        type="text"
       />
 
       <div className="flex justify-end mt-6">

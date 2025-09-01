@@ -4,7 +4,7 @@ import {
   LuWalletMinimal,
   LuLogOut,
 } from "react-icons/lu";
-import { FaCalculator } from "react-icons/fa";
+import { FaCalculator, FaSuitcaseRolling } from "react-icons/fa";
 
 export const SIDE_MENU_DATA = [
   {
@@ -26,7 +26,13 @@ export const SIDE_MENU_DATA = [
     path: "/expense",
   },
   {
-    id: "06",
+    id: "04",
+    label: "Trip",
+    icon: FaSuitcaseRolling,
+    path: "/trip",
+  },
+  {
+    id: "05",
     label: "Calculator",
     icon: FaCalculator,
     path: '/calculator',
@@ -34,10 +40,11 @@ export const SIDE_MENU_DATA = [
   }
   ,
   {
-    id: "07",
+    id: "06",
     label: "Logout",
     icon: LuLogOut,
     path: null,
     isLogout: true, 
   },
+
 ];

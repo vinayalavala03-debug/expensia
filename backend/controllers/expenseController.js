@@ -8,7 +8,7 @@ const Expense = require('../models/Expense.js');
 exports.addExpense = async (req, res) => {
     const userId = req.user.id;
     try {
-        const {icon, category, amount, date} = req.body;
+        const {icon, category, amount, date, description} = req.body;
 
         if(!icon || !category || !amount || !date) {
             return res.status(400).json({ message: 'Please fill all fields' });
@@ -18,6 +18,7 @@ exports.addExpense = async (req, res) => {
             userId,
             icon,
             category,
+            description,
             amount,
             date
         });
@@ -74,6 +75,7 @@ exports.downloadExpenseExcel = async (req, res) => {
             Category: expense.category,
             Icon: expense.icon,
             Amount: expense.amount,
+            Description: expense.description,
             Date: expense.date.toISOString().split('T')[0]
         }));
 

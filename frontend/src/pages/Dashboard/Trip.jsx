@@ -75,9 +75,9 @@ const Trip = () => {
                 <Link
                   key={trip._id}
                   to={`/dashboard/trips/${trip._id}`}
-                  className="group bg-gray-50 rounded-xl shadow p-5 hover:shadow-md transition border border-gray-200"
+                  className="group  rounded-xl  p-5 transition border border-gray-200"
                 >
-                  <h3 className="text-base font-semibold text-gray-800 group-hover:text-primary transition">
+                  <h3 className="text-base font-semibold text-gray-800  transition">
                     {trip.name}
                   </h3>
 

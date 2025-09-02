@@ -74,7 +74,7 @@ const TripDetails = () => {
       <div className="my-6 mx-auto max-w-6xl space-y-10">
         {/* Trip Header */}
         {trip && (
-          <div>
+          <div className="flex items-center border border-gray-200 rounded-lg p-6 space-x-4">
             <h2 className="text-2xl font-bold mb-1">{trip.name}</h2>
             <p className="text-gray-600 text-sm">{trip.destination}</p>
             <p className="text-xs text-gray-400">
@@ -84,7 +84,7 @@ const TripDetails = () => {
           </div>
         )}
 
-        {/* Summary Row (no inside card) */}
+        {/* Summary Row (bordered boxes only) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex items-center border border-gray-200 rounded-lg p-6 space-x-4">
             <div className="bg-primary text-white p-3 rounded-full">
@@ -129,7 +129,7 @@ const TripDetails = () => {
           </div>
         </div>
 
-        {/* ✅ Tabs (no inside white card) */}
+        {/* Tabs (no inside white card) */}
         <div>
           <div className="flex border-b border-gray-200">
             <button

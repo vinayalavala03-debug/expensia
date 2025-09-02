@@ -39,7 +39,7 @@ const Expense = () => {
   
   
     const handleAddExpense = async (expense) => {
-      const {category,amount, date,icon}  = expense;
+      const {category,amount, date,icon, description}  = expense;
   
       if(!category.trim()){
         toast.error('category is required')
@@ -58,7 +58,7 @@ const Expense = () => {
           category,
           amount,
           date,
-          description: expense.description || 'No description', // Use provided description or default
+          description, // Use provided description or default
           icon
         })
         setOpenAddExpenseModal(false)  // Close the modal after adding expense

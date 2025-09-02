@@ -18,6 +18,9 @@ import CustomLineChart from "../../components/Charts/CustomLineChart";
 import { IoMdCard } from "react-icons/io";
 import { LuWalletMinimal, LuHandCoins } from "react-icons/lu";
 
+// ✅ Delete Alert
+import DeleteAlert from "../../components/DeleteAlert";
+
 const addThousandSeparator = (num) =>
   num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -27,6 +30,12 @@ const TripDetails = () => {
   const [openExpenseModal, setOpenExpenseModal] = useState(false);
   const [openIncomeModal, setOpenIncomeModal] = useState(false);
   const [activeTab, setActiveTab] = useState("expenses");
+
+  // ✅ Delete alert modal state
+  const [openDeleteAlert, setOpenDeleteAlert] = useState({
+    show: false,
+    data: null,
+  });
 
   const fetchTripDetails = async () => {
     try {
@@ -59,6 +68,36 @@ const TripDetails = () => {
     }
   };
 
+  // ✅ Delete Expense
+  const handleDeleteExpense = async (expenseId) => {
+    try {
+      await axiosInstance.delete(
+        API_PATHS.EXPENSE.DELETE_EXPENSE( expenseId)
+      );
+      setOpenDeleteAlert({ show: false, data: null });
+      toast.success("Expense deleted successfully");
+      fetchTripDetails();
+    } catch (err) {
+      toast.error("Failed to delete expense");
+    }
+  };
+
+  // ✅ Delete Income
+  const handleDeleteIncome = async (incomeId) => {
+    try {
+      await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME( incomeId));
+      setOpenDeleteAlert({ show: false, data: null });
+      toast.success("Income deleted successfully");
+      fetchTripDetails(); 
+    } catch (error) {
+      console.error(
+        "Failed to delete income:",
+        error.response?.data?.message || error.message
+      );
+      toast.error("Failed to delete income");
+    }
+  };
+
   useEffect(() => {
     fetchTripDetails();
   }, [id]);
@@ -84,7 +123,7 @@ const TripDetails = () => {
           </div>
         )}
 
-        {/* Summary Row (bordered boxes only) */}
+        {/* Summary Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex items-center border border-gray-200 rounded-lg p-6 space-x-4">
             <div className="bg-primary text-white p-3 rounded-full">
@@ -129,7 +168,7 @@ const TripDetails = () => {
           </div>
         </div>
 
-        {/* Tabs (no inside white card) */}
+        {/* Tabs */}
         <div>
           <div className="flex border-b border-gray-200">
             <button
@@ -173,7 +212,7 @@ const TripDetails = () => {
 
               <ExpenseList
                 transactions={trip?.expenses || []}
-                onDelete={() => {}}
+                onDelete={handleDeleteExpense}
               />
             </>
           )}
@@ -197,7 +236,7 @@ const TripDetails = () => {
 
               <IncomeList
                 transactions={trip?.incomes || []}
-                onDelete={() => {}}
+                onDelete={(id) => setOpenDeleteAlert({ show: true, data: id })}
               />
             </>
           )}
@@ -218,6 +257,18 @@ const TripDetails = () => {
           title="Add Income"
         >
           <AddIncomeForm onAddIncome={handleAddIncome} />
+        </Modal>
+
+        {/* ✅ Delete Alert Modal */}
+        <Modal
+          isOpen={openDeleteAlert.show}
+          onClose={() => setOpenDeleteAlert({ show: false, data: null })}
+          title="Delete Income"
+        >
+          <DeleteAlert
+            content={`Are you sure you want to delete this income?`}
+            onDelete={() => handleDeleteIncome(openDeleteAlert.data)}
+          />
         </Modal>
       </div>
     </DashboardLayout>

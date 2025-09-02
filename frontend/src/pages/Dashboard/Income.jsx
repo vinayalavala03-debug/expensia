@@ -40,7 +40,7 @@ useUserAuth()
 
 
   const handleAddIncome = async (income) => {
-    const {source,amount, date,icon}  = income;
+    const {source,amount, date,icon, description}  = income;
 
     if(!source.trim()){
       toast.error('source is required')
@@ -60,7 +60,8 @@ useUserAuth()
         source,
         amount,
         date,
-        icon
+        icon,
+        description
       })
       setOpenAddIncomeModal(false)  // Close the modal after adding income
       toast.success('Income added successfully')

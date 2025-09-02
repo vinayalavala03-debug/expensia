@@ -31,9 +31,10 @@ const TripDetails = () => {
   const [openIncomeModal, setOpenIncomeModal] = useState(false);
   const [activeTab, setActiveTab] = useState("expenses");
 
-  // ✅ Delete alert modal state
+  // ✅ Delete alert modal state (unified for both income & expense)
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
+    type: null, // "income" or "expense"
     data: null,
   });
 
@@ -71,10 +72,8 @@ const TripDetails = () => {
   // ✅ Delete Expense
   const handleDeleteExpense = async (expenseId) => {
     try {
-      await axiosInstance.delete(
-        API_PATHS.EXPENSE.DELETE_EXPENSE( expenseId)
-      );
-      setOpenDeleteAlert({ show: false, data: null });
+      await axiosInstance.delete(API_PATHS.EXPENSE.DELETE_EXPENSE(expenseId));
+      setOpenDeleteAlert({ show: false, type: null, data: null });
       toast.success("Expense deleted successfully");
       fetchTripDetails();
     } catch (err) {
@@ -85,10 +84,10 @@ const TripDetails = () => {
   // ✅ Delete Income
   const handleDeleteIncome = async (incomeId) => {
     try {
-      await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME( incomeId));
-      setOpenDeleteAlert({ show: false, data: null });
+      await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME(incomeId));
+      setOpenDeleteAlert({ show: false, type: null, data: null });
       toast.success("Income deleted successfully");
-      fetchTripDetails(); 
+      fetchTripDetails();
     } catch (error) {
       console.error(
         "Failed to delete income:",
@@ -114,7 +113,7 @@ const TripDetails = () => {
         {/* Trip Header */}
         {trip && (
           <div className="flex items-center border border-gray-200 rounded-lg p-6 space-x-4">
-            <h2 className="text-2xl font-bold mb-1">{trip.name}</h2>
+            <h2 className="text-2xl font-bold">{trip.name}</h2>
             <p className="text-gray-600 text-sm">{trip.destination}</p>
             <p className="text-xs text-gray-400">
               {new Date(trip.startDate).toLocaleDateString()} –{" "}
@@ -196,14 +195,14 @@ const TripDetails = () => {
           {/* Expenses Tab */}
           {activeTab === "expenses" && (
             <>
-              <div className="flex justify-between items-center m-4">
-                <h3 className="text-lg font-semibold">Expenses</h3>
+              <div className="flex flex-col items-center text-center gap-2 m-4 md:flex-row-reverse md:justify-start lg:justify-between">
                 <button
                   className="add-btn"
                   onClick={() => setOpenExpenseModal(true)}
                 >
                   + Add Expense
                 </button>
+                <h3 className="text-lg font-semibold">Expenses</h3>
               </div>
 
               <div className="mb-4">
@@ -212,7 +211,9 @@ const TripDetails = () => {
 
               <ExpenseList
                 transactions={trip?.expenses || []}
-                onDelete={handleDeleteExpense}
+                onDelete={(id) =>
+                  setOpenDeleteAlert({ show: true, type: "expense", data: id })
+                }
               />
             </>
           )}
@@ -220,14 +221,14 @@ const TripDetails = () => {
           {/* Income Tab */}
           {activeTab === "income" && (
             <>
-              <div className="flex justify-between items-center m-4">
-                <h3 className="text-lg font-semibold">Income</h3>
+              <div className="flex flex-col items-center text-center gap-2 m-4 md:flex-row-reverse md:justify-start lg:justify-between">
                 <button
                   className="add-btn"
                   onClick={() => setOpenIncomeModal(true)}
                 >
                   + Add Income
                 </button>
+                <h3 className="text-lg font-semibold">Income</h3>
               </div>
 
               <div className="mb-4">
@@ -236,7 +237,9 @@ const TripDetails = () => {
 
               <IncomeList
                 transactions={trip?.incomes || []}
-                onDelete={(id) => setOpenDeleteAlert({ show: true, data: id })}
+                onDelete={(id) =>
+                  setOpenDeleteAlert({ show: true, type: "income", data: id })
+                }
               />
             </>
           )}
@@ -259,15 +262,21 @@ const TripDetails = () => {
           <AddIncomeForm onAddIncome={handleAddIncome} />
         </Modal>
 
-        {/* ✅ Delete Alert Modal */}
+        {/* ✅ Unified Delete Modal */}
         <Modal
           isOpen={openDeleteAlert.show}
-          onClose={() => setOpenDeleteAlert({ show: false, data: null })}
-          title="Delete Income"
+          onClose={() => setOpenDeleteAlert({ show: false, type: null, data: null })}
+          title={`Delete ${openDeleteAlert.type === "income" ? "Income" : "Expense"}`}
         >
           <DeleteAlert
-            content={`Are you sure you want to delete this income?`}
-            onDelete={() => handleDeleteIncome(openDeleteAlert.data)}
+            content={`Are you sure you want to delete this ${openDeleteAlert.type}?`}
+            onDelete={() => {
+              if (openDeleteAlert.type === "income") {
+                handleDeleteIncome(openDeleteAlert.data);
+              } else {
+                handleDeleteExpense(openDeleteAlert.data);
+              }
+            }}
           />
         </Modal>
       </div>

@@ -10,15 +10,14 @@ import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import toast from "react-hot-toast";
 
-// ✅ Import Charts
+// ✅ Charts
 import CustomBarChart from "../../components/Charts/CustomBarChart";
 import CustomLineChart from "../../components/Charts/CustomLineChart";
 
-// ✅ Import Icons
+// ✅ Icons
 import { IoMdCard } from "react-icons/io";
 import { LuWalletMinimal, LuHandCoins } from "react-icons/lu";
 
-// ✅ Utility for thousand separator
 const addThousandSeparator = (num) =>
   num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -27,6 +26,7 @@ const TripDetails = () => {
   const [trip, setTrip] = useState(null);
   const [openExpenseModal, setOpenExpenseModal] = useState(false);
   const [openIncomeModal, setOpenIncomeModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("expenses");
 
   const fetchTripDetails = async () => {
     try {
@@ -63,7 +63,6 @@ const TripDetails = () => {
     fetchTripDetails();
   }, [id]);
 
-  // ✅ Calculate totals (safe defaults if trip not loaded yet)
   const totalIncome =
     trip?.incomes?.reduce((acc, i) => acc + i.amount, 0) || 0;
   const totalExpenses =
@@ -85,7 +84,7 @@ const TripDetails = () => {
           </div>
         )}
 
-        {/* ✅ Summary Cards with Icon Backgrounds */}
+        {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Balance */}
           <div className="flex items-center bg-white rounded-lg border border-gray-200 p-6 space-x-4">
@@ -133,52 +132,86 @@ const TripDetails = () => {
           </div>
         </div>
 
-        {/* Expenses Section */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="text-lg font-semibold">Expenses</h3>
-              <p className="text-gray-500 text-sm">Track your spending</p>
-            </div>
+        {/* ✅ Tabs */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="flex border-b">
             <button
-              className="add-btn"
-              onClick={() => setOpenExpenseModal(true)}
+              className={`flex-1 py-3 text-center font-medium ${
+                activeTab === "expenses"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setActiveTab("expenses")}
             >
-              + Add Expense
+              Expenses
+            </button>
+            <button
+              className={`flex-1 py-3 text-center font-medium ${
+                activeTab === "income"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setActiveTab("income")}
+            >
+              Income
             </button>
           </div>
 
-          {/* Chart */}
-          <div className="mb-6">
-            <CustomLineChart data={trip?.expenses || []} />
-          </div>
 
-          {/* List */}
-          <ExpenseList transactions={trip?.expenses || []} onDelete={() => {}} />
-        </div>
+            {/* Expenses Tab */}
+            {activeTab === "expenses" && (
+              <>
+                <div className="flex justify-between items-center m-4 mb-4">
+                  <h3 className="text-lg font-semibold">Expenses</h3>
+                  <button
+                    className="add-btn"
+                    onClick={() => setOpenExpenseModal(true)}
+                  >
+                    + Add Expense
+                  </button>
+                </div>
 
-        {/* Income Section */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="text-lg font-semibold">Income</h3>
-              <p className="text-gray-500 text-sm">Monitor your earnings</p>
-            </div>
-            <button
-              className="add-btn"
-              onClick={() => setOpenIncomeModal(true)}
-            >
-              + Add Income
-            </button>
-          </div>
+                <div className="mb-4">
+                  <CustomLineChart data={trip?.expenses || []} />
+                </div>
 
-          {/* Chart */}
-          <div className="mb-6">
-            <CustomBarChart data={trip?.incomes || []} />
-          </div>
+                <hr className="my-4" />
 
-          {/* List */}
-          <IncomeList transactions={trip?.incomes || []} onDelete={() => {}} />
+                <ExpenseList
+                  transactions={trip?.expenses || []}
+                  onDelete={() => {}}
+                />
+              </>
+            )}
+
+            {/* Income Tab */}
+            {activeTab === "income" && (
+              <>
+                <div className="flex justify-between items-center m-4 mb-4">
+                  <h3 className="text-lg font-semibold">Income</h3>
+                  <button
+                    className="add-btn"
+                    onClick={() => setOpenIncomeModal(true)}
+                  >
+                    + Add Income
+                  </button>
+                </div>
+
+                <div className="mb-4">
+                  <CustomBarChart data={trip?.incomes || []} />
+                </div>
+
+                <hr className="my-4" />
+
+                {/* ✅ Now continuous in same parent card */}
+                <IncomeList
+                  transactions={trip?.incomes || []}
+                  onDelete={() => {}}
+                  inline
+                />
+              </>
+            )}
+
         </div>
 
         {/* Modals */}

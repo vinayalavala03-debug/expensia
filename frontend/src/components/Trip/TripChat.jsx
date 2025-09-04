@@ -137,7 +137,7 @@ export default function TripChat({ tripId }) {
   }, [showEmojiPicker]);
 
   return (
-    <div className="flex flex-col h-[500px] bg-white rounded-lg shadow-sm relative">
+    <div className="flex flex-col h-[500px] bg-white rounded-2xl relative">
       {connecting && (
         <span className="text-xs text-gray-400 px-3 py-1">Connecting…</span>
       )}

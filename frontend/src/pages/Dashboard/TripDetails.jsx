@@ -528,7 +528,7 @@ const TripDetails = () => {
 
         {/* Group Chat */}
         {trip?.visibility === "group" && (
-          <div className="bg-white rounded-2xl shadow p-6">
+          <div className="bg-white rounded-2xl shadow p-3">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Trip Chat 💬
             </h3>

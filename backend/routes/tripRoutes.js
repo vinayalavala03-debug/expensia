@@ -1,21 +1,49 @@
 const express = require("express");
-const { protect } = require('../middleware/authMiddleware.js');
 const {
-  addTrip,
-  getTrips,
-  getTripDetails,
+  createTrip,
+  getMyTrips,
+  getTripById,
   addExpenseToTrip,
   addIncomeToTrip,
+  addParticipants,
+  removeParticipant,
+  addPlace,
+  markPlaceVisited,
+  getTripStats,
+  postMessage,
+  getChat,
+  updateTripVisibility,
 } = require("../controllers/tripController");
+
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/", protect, addTrip);
-router.get("/", protect, getTrips);
-router.get("/:id", protect, getTripDetails);
+// Trips
+router.post("/", protect, createTrip);
+router.get("/", protect, getMyTrips);
+router.get("/:tripId", protect, getTripById);
 
-// nested routes
+// Expenses & incomes linked to trip
 router.post("/:id/expenses", protect, addExpenseToTrip);
 router.post("/:id/incomes", protect, addIncomeToTrip);
+
+// Participants (creator only)
+router.post("/:tripId/participants", protect, addParticipants);
+router.delete("/:tripId/participants/:userId", protect, removeParticipant);
+
+// Places (creator only)
+router.post("/:tripId/places", protect, addPlace);
+router.put("/:tripId/places/:placeId", protect, markPlaceVisited);
+
+// Stats
+router.get("/:tripId/stats", protect, getTripStats);
+
+// Chat
+router.post("/:tripId/messages", protect, postMessage);
+router.get("/:tripId/messages", protect, getChat);
+
+// Visibility (creator only)
+router.patch("/:tripId/visibility", protect, updateTripVisibility);
 
 module.exports = router;

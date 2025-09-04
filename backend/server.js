@@ -26,7 +26,7 @@ const server = http.createServer(app);
 // --- CORS ---
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://expensia.vercel.app",
+    origin: process.env.FRONTEND_URL || "https://expensia.vercel.app" || "*",
     credentials: true,
   })
 );

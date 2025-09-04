@@ -15,7 +15,7 @@ export default function TripChat({ tripId }) {
   const endRef = useRef(null);
 
   const token = useMemo(() => localStorage.getItem("token"), []);
-  const apiBase = useMemo(() => BASE_URL || "https://backend-2-qwn9.onrender.com", []);
+  const apiBase = useMemo(() => BASE_URL || "http://localhost:4000", []);
 
   const currentUserId = useMemo(() => {
     try {
@@ -239,7 +239,7 @@ export default function TripChat({ tripId }) {
 
         {/* Text Area */}
         <textarea
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-400"
           placeholder="Type a message"
           rows={1}
           value={input}
@@ -249,7 +249,7 @@ export default function TripChat({ tripId }) {
 
         {/* ✅ Permanent Send Button */}
         <button
-          className="bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 flex items-center justify-center"
+          className="bg-purple-500 text-white p-2 rounded-full hover:bg-purple-600 flex items-center justify-center"
           onClick={sendMessage}
         >
           <svg

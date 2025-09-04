@@ -1,28 +1,45 @@
-import React from "react";
-import moment from "moment";
+import { useEffect, useState } from "react";
+import { getMyTrips } from "../../services/tripService";
+import { Card, CardContent } from "@/components/ui/card";
 
-const TripList = ({ trips }) => {
-  if (!trips?.length) {
-    return <p className="text-gray-500 mt-4">No trips found</p>;
-  }
+export default function TripList({ onSelect }) {
+  const [trips, setTrips] = useState([]);
+
+  useEffect(() => {
+    loadTrips();
+  }, []);
+
+  const loadTrips = async () => {
+    try {
+      const trips = await getMyTrips(); // ✅ already an array
+      setTrips(trips);
+    } catch (err) {
+      console.error("Error fetching trips:", err);
+    }
+  };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-      {trips.map((trip) => (
-        <div key={trip._id} className="card p-4 shadow-sm">
-          <h4 className="text-lg font-semibold">{trip.name}</h4>
-          <p className="text-sm text-gray-600">{trip.destination}</p>
-          <p className="text-xs text-gray-400 mt-1">
-            {moment(trip.startDate).format("DD MMM YYYY")} -{" "}
-            {moment(trip.endDate).format("DD MMM YYYY")}
-          </p>
-          {trip.description && (
-            <p className="text-sm text-gray-500 mt-2">{trip.description}</p>
-          )}
-        </div>
-      ))}
+    <div className="grid gap-4">
+      {trips.length === 0 ? (
+        <p className="text-center text-gray-500 py-4">No trips found.</p>
+      ) : (
+        trips.map((t) => (
+          <Card
+            key={t._id}
+            className="p-4 hover:shadow cursor-pointer"
+            onClick={() => onSelect(t)}
+          >
+            <CardContent>
+              <h2 className="font-semibold">{t.name}</h2>
+              <p className="text-sm text-gray-600">{t.destination}</p>
+              <p className="text-xs text-gray-400">
+                {new Date(t.startDate).toLocaleDateString()} →{" "}
+                {new Date(t.endDate).toLocaleDateString()}
+              </p>
+            </CardContent>
+          </Card>
+        ))
+      )}
     </div>
   );
-};
-
-export default TripList;
+}

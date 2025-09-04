@@ -19,12 +19,12 @@ const App = () => {
           <Route path="/" element={<Root />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
+
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<Home />} />
           <Route path="/income" element={<Income />} />
           <Route path="/expense" element={<Expense />} />
-          <Route path="/trip" element={<Trip />} />
+          <Route path="/dashboard/trips" element={<Trip />} />
           <Route path="/dashboard/trips/:id" element={<TripDetails />} /> {/* ✅ Now works */}
           <Route path="/calculator" element={<Calculator />} />
         </Routes>
@@ -50,4 +50,3 @@ const Root = () => {
     <Navigate to="/login" />
   );
 };
-

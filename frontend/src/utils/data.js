@@ -29,7 +29,7 @@ export const SIDE_MENU_DATA = [
     id: "08",
     label: "Trips",
     icon: FaSuitcaseRolling,
-    path: "/trip",
+    path: "/dashboard/trips",
   },
   {
     id: "05",

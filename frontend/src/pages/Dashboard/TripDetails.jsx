@@ -305,8 +305,8 @@ const TripDetails = () => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow p-6">
-          <div className="flex border-b border-gray-200 mb-4">
+        <div>
+          <div className="flex border-b border-gray-200">
             <button
               className={`flex-1 py-3 text-center font-medium ${
                 activeTab === "expenses"
@@ -329,27 +329,23 @@ const TripDetails = () => {
             </button>
           </div>
 
+          {/* Expenses Tab */}
           {activeTab === "expenses" && (
             <>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Expenses
-                </h3>
+              <div className="flex flex-col items-center text-center gap-2 m-4 md:flex-row-reverse md:justify-start lg:justify-between">
                 <button
                   className="add-btn"
                   onClick={() => setOpenExpenseModal(true)}
                 >
                   + Add Expense
                 </button>
+                <h3 className="text-lg font-semibold">Expenses</h3>
               </div>
-              <CustomLineChart
-                data={
-                  trip?.expenses?.map((e) => ({
-                    date: e.date,
-                    amount: Number(e.amount) || 0,
-                  })) || []
-                }
-              />
+
+              <div className="mb-4">
+                <CustomLineChart data={trip?.expenses || []} />
+              </div>
+
               <ExpenseList
                 transactions={trip?.expenses || []}
                 onDelete={(id) =>
@@ -359,25 +355,23 @@ const TripDetails = () => {
             </>
           )}
 
+          {/* Income Tab */}
           {activeTab === "income" && (
             <>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">Income</h3>
+              <div className="flex flex-col items-center text-center gap-2 m-4 md:flex-row-reverse md:justify-start lg:justify-between">
                 <button
                   className="add-btn"
                   onClick={() => setOpenIncomeModal(true)}
                 >
                   + Add Income
                 </button>
+                <h3 className="text-lg font-semibold">Income</h3>
               </div>
-              <CustomBarChart
-                data={
-                  trip?.incomes?.map((i) => ({
-                    date: i.date,
-                    amount: Number(i.amount) || 0,
-                  })) || []
-                }
-              />
+
+              <div className="mb-4">
+                <CustomBarChart data={trip?.incomes || []} />
+              </div>
+
               <IncomeList
                 transactions={trip?.incomes || []}
                 onDelete={(id) =>
@@ -449,52 +443,50 @@ const TripDetails = () => {
           </div>
 
           {/* Places Card */}
-<div className="bg-white rounded-2xl shadow p-6 flex flex-col">
-  <div className="flex items-center justify-between mb-4">
-    <h3 className="text-lg font-semibold text-gray-800">Places</h3>
-    <button className="add-btn" onClick={handleAddPlace}>
-      <LuMapPin className="inline-block mr-1" /> Add Place
-    </button>
-  </div>
+        <div className="bg-white rounded-2xl shadow p-6 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">Places</h3>
+            <button className="add-btn" onClick={handleAddPlace}>
+              <LuMapPin className="inline-block mr-1" /> Add Place
+            </button>
+          </div>
 
-  {/* Add place inputs */}
-  <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4">
-    <input
-      className="border rounded-md px-3 py-2 text-sm"
-      placeholder="Name *"
-      value={newPlace.name}
-      onChange={(e) =>
-        setNewPlace((s) => ({ ...s, name: e.target.value }))
-      }
-    />
-    <input
-      className="border rounded-md px-3 py-2 text-sm"
-      placeholder="Location"
-      value={newPlace.location}
-      onChange={(e) =>
-        setNewPlace((s) => ({ ...s, location: e.target.value }))
-      }
-    />
-    <input
-      className="border rounded-md px-3 py-2 text-sm"
-      placeholder="Planned Cost"
-      type="number"
-      value={newPlace.plannedCost}
-      onChange={(e) =>
-        setNewPlace((s) => ({ ...s, plannedCost: e.target.value }))
-      }
-    />
-    <input
-      className="border rounded-md px-3 py-2 text-sm"
-      placeholder="Notes"
-      value={newPlace.notes}
-      onChange={(e) =>
-        setNewPlace((s) => ({ ...s, notes: e.target.value }))
-      }
-    />
-  </div>
-
-
+          {/* Add place inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4">
+            <input
+              className="border rounded-md px-3 py-2 text-sm"
+              placeholder="Name *"
+              value={newPlace.name}
+              onChange={(e) =>
+                setNewPlace((s) => ({ ...s, name: e.target.value }))
+              }
+            />
+            <input
+              className="border rounded-md px-3 py-2 text-sm"
+              placeholder="Location"
+              value={newPlace.location}
+              onChange={(e) =>
+                setNewPlace((s) => ({ ...s, location: e.target.value }))
+              }
+            />
+            <input
+              className="border rounded-md px-3 py-2 text-sm"
+              placeholder="Planned Cost"
+              type="number"
+              value={newPlace.plannedCost}
+              onChange={(e) =>
+                setNewPlace((s) => ({ ...s, plannedCost: e.target.value }))
+              }
+            />
+            <input
+              className="border rounded-md px-3 py-2 text-sm"
+              placeholder="Notes"
+              value={newPlace.notes}
+              onChange={(e) =>
+                setNewPlace((s) => ({ ...s, notes: e.target.value }))
+              }
+            />
+          </div>
             {/* Places list */}
             <div className="space-y-2">
               {(trip?.places || []).length === 0 ? (

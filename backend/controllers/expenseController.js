@@ -6,31 +6,28 @@ const fs = require('fs');
 const Expense = require('../models/Expense.js');
 //add expense
 exports.addExpense = async (req, res) => {
-    const userId = req.user.id;
-    try {
-        const {icon, category, amount, date, description} = req.body;
+  try {
+    const { icon, description, category, amount } = req.body;
 
-        if(!icon || !category || !amount || !date) {
-            return res.status(400).json({ message: 'Please fill all fields' });
-        }
-
-        const newExpense = new Expense({
-            userId,
-            icon,
-            category,
-            description,
-            amount,
-            date
-        });
-
-        await newExpense.save();
-
-        return res.status(201).json({ message: 'Expense added successfully', data: newExpense });
-    } catch (error) {
-        return res.status(500).json({ message: 'Server error' });
+    if (!icon || !description || !category || !amount) {
+      return res.status(400).json({ message: "All fields are required" });
     }
-}
 
+    const expense = new Expense({
+      userId: req.user._id, // from auth middleware
+      icon,
+      description,
+      category,
+      amount,
+    });
+
+    await expense.save();
+    res.status(201).json(expense);
+  } catch (err) {
+    console.error("Error adding expense:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 //get all expenses
 exports.getAllExpenses = async (req, res) => {
     const userId = req.user.id;

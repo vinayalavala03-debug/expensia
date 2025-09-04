@@ -1,14 +1,13 @@
 // public/service-worker.js
-self.addEventListener("install", (event) => {
-  console.log("Service Worker installing.");
+
+self.addEventListener("install", () => {
+  console.log("Service Worker installed.");
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", () => {
   console.log("Service Worker activated.");
+  clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  // Basic passthrough (no caching)
-  event.respondWith(fetch(event.request));
-});
+// 🚫 Do NOT add a fetch listener

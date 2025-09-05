@@ -22,7 +22,6 @@ const Home = () => {
   const navigate = useNavigate()
 
   const [dashboardData, setDashboardData] = useState(null)
-  const [loading, setLoading] = useState(true)
 
   // get current month name (e.g., September)
   const monthName = new Date().toLocaleString('default', { month: 'long' })
@@ -32,13 +31,11 @@ const Home = () => {
     const fetchDashboardData = async () => {
       try {
         const response = await axiosInstance.get(API_PATHS.DASHBOARD.GET_DATA)
-        if (isMounted && response.data) {
-          setDashboardData(response.data)
+        if (isMounted && response.data?.data) {
+          setDashboardData(response.data.data) // unwrap data
         }
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error)
-      } finally {
-        if (isMounted) setLoading(false)
       }
     }
 
@@ -52,9 +49,7 @@ const Home = () => {
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className="my-5 mx-auto">
-        {loading ? (
-          <div className="text-center text-gray-500">Loading dashboard...</div>
-        ) : dashboardData ? (
+        {dashboardData ? (
           <>
             {/* Overall Info Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

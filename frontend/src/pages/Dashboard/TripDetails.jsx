@@ -585,7 +585,7 @@ const handleDeleteIncome = async (incomeId) => {
         </div>
 
         {/* Group Chat */}
-        {trip?.visibility === "group" && (
+        {trip?.visibility === "group" || (trip?.participants?.length || 0) > 0 && (
           <div className="bg-white rounded-2xl shadow p-3">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Trip Chat 💬

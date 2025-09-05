@@ -65,20 +65,19 @@ const ExpenseList = ({
             </h6>
 
             {/* Expenses for this date */}
-            <div className='grid grid-cols-1 md:grid-cols-2'>
-              {group.expenses.map((expense) => (
-                <TransactionInfoCard
-                  key={expense._id}
-                  title={expense.category}
-                  amount={expense.amount}
-                  date={moment(expense.date).format('DD MMM YYYY')}
-                  type='expense'
-                  icon={expense.icon}
-                  description={expense.description}
-                  onDelete={() => onDelete(expense._id)}
-                />
-              ))}
-            </div>
+            {Array.isArray(group.expenses) && group.expenses.map((expense) => (
+              <TransactionInfoCard
+                key={expense._id}
+                title={expense.category}
+                amount={expense.amount}
+                date={moment(expense.date).format("DD MMM YYYY")}
+                type="expense"
+                icon={expense.icon}
+                description={expense.description}
+                onDelete={() => onDelete(expense._id)}
+              />
+            ))}
+
           </div>
         ))
       ) : (

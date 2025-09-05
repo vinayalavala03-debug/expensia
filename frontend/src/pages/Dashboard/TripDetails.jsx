@@ -332,16 +332,15 @@ const TripDetails = () => {
           {/* Expenses Tab */}
           {activeTab === "expenses" && (
             <>
-              <div className="flex flex-col items-center text-center gap-2 m-4 md:flex-row-reverse md:justify-start lg:justify-between">
-                <button
-                  className="add-btn"
-                  onClick={() => setOpenExpenseModal(true)}
-                >
-                  + Add Expense
-                </button>
-                <h3 className="text-lg font-semibold">Expenses</h3>
-              </div>
-
+              <div className="flex flex-row items-center justify-between m-4">
+              <h3 className="text-lg font-semibold">Expenses</h3>
+              <button
+                className="add-btn"
+                onClick={() => setOpenExpenseModal(true)}
+              >
+                + Add Expense
+              </button>
+            </div>
               <div className="mb-4">
                 <CustomLineChart data={trip?.expenses || []} />
               </div>
@@ -358,15 +357,16 @@ const TripDetails = () => {
           {/* Income Tab */}
           {activeTab === "income" && (
             <>
-              <div className="flex flex-col items-center text-center gap-2 m-4 md:flex-row-reverse md:justify-start lg:justify-between">
-                <button
-                  className="add-btn"
-                  onClick={() => setOpenIncomeModal(true)}
-                >
-                  + Add Income
-                </button>
-                <h3 className="text-lg font-semibold">Income</h3>
-              </div>
+              <div className="flex flex-col items-center text-center gap-2 m-4 sm:flex-row sm:justify-between">
+              <h3 className="text-lg font-semibold">Income</h3>
+              <button
+                className="add-btn"
+                onClick={() => setOpenIncomeModal(true)}
+              >
+                + Add Income
+              </button>
+            </div>
+
 
               <div className="mb-4">
                 <CustomBarChart data={trip?.incomes || []} />

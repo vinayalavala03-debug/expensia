@@ -33,7 +33,7 @@ const IncomeList = ({
     <div className="card">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h5 className="text-lg">Income by Date</h5>
+        <h5 className="text-lg">Incomes by Date</h5>
 
         <div className="flex gap-2 items-center">
           {/* Date Picker */}
@@ -61,7 +61,7 @@ const IncomeList = ({
           <div key={group._id} className="mt-4">
             {/* Group Date */}
             <h6 className="font-semibold text-gray-700 mb-2">
-              {moment(group._id, "YYYY-MM-DD").format("DD MMM YYYY")}
+              {moment(group._id).format("DD MMM YYYY")}
             </h6>
 
             {/* Incomes for this date */}

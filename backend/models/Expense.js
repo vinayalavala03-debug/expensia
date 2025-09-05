@@ -34,7 +34,6 @@ const expenseSchema = new mongoose.Schema(
     },
     date: {
       type: Date,
-      default: Date.now,
       index: true // ✅ fast date range queries
     }
   },

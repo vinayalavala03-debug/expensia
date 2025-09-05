@@ -30,10 +30,10 @@ const ExpenseList = ({
   }
 
   return (
-    <div className='card'>
+    <div className="card">
       {/* Header */}
-      <div className='flex items-center justify-between'>
-        <h5 className='text-lg'>Expenses by Date</h5>
+      <div className="flex items-center justify-between">
+        <h5 className="text-lg">Expenses by Date</h5>
 
         <div className="flex gap-2 items-center">
           {/* Date Picker */}
@@ -46,10 +46,10 @@ const ExpenseList = ({
 
           {/* Download Button */}
           <button
-            className='card-btn flex items-center gap-1'
+            className="card-btn flex items-center gap-1"
             onClick={onDownload}
           >
-            <LuDownload className='text-base' />
+            <LuDownload className="text-base" />
             Download
           </button>
         </div>
@@ -61,23 +61,25 @@ const ExpenseList = ({
           <div key={group._id} className="mt-4">
             {/* Group Date */}
             <h6 className="font-semibold text-gray-700 mb-2">
-              {moment(group._id).format('DD MMM YYYY')}
+              {moment(group._id).format("DD MMM YYYY")}
             </h6>
 
             {/* Expenses for this date */}
-            {Array.isArray(group.expenses) && group.expenses.map((expense) => (
-              <TransactionInfoCard
-                key={expense._id}
-                title={expense.category}
-                amount={expense.amount}
-                date={moment(expense.date).format("DD MMM YYYY")}
-                type="expense"
-                icon={expense.icon}
-                description={expense.description}
-                onDelete={() => onDelete(expense._id)}
-              />
-            ))}
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.isArray(group.expenses) &&
+                group.expenses.map((expense) => (
+                  <TransactionInfoCard
+                    key={expense._id}
+                    title={expense.category}
+                    amount={expense.amount}
+                    date={moment(expense.date).format("DD MMM YYYY")}
+                    type="expense"
+                    icon={expense.icon}
+                    description={expense.description}
+                    onDelete={() => onDelete(expense._id)}
+                  />
+                ))}
+            </div>
           </div>
         ))
       ) : (

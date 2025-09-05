@@ -16,10 +16,13 @@ exports.addExpense = async (req, res) => {
       return res.status(400).json({ success: false, message: "Amount must be greater than 0" });
     }
 
+    const parsedDate = new Date(date);
+
     const expense = new Expense({
       userId: req.user.id, // ✅ consistent
       icon,
       description,
+      date: parsedDate,
       category,
       amount,
     });
@@ -32,25 +35,54 @@ exports.addExpense = async (req, res) => {
   }
 };
 
+
 // =======================
-// ✅ Get All Expenses
+// ✅ Get Expenses Grouped by Date
 // =======================
-exports.getAllExpenses = async (req, res) => {
+exports.getExpensesByDate = async (req, res) => {
   try {
-    const expenses = await Expense.find({ userId: req.user.id })
-      .sort({ date: -1 })
-      .lean();
+    const { page = 1, limit = 1, date } = req.query; 
+    const matchStage = { userId: req.user.id };
+
+    // If date filter is provided
+    if (date) {
+      const start = new Date(date);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(date);
+      end.setHours(23, 59, 59, 999);
+      matchStage.date = { $gte: start, $lte: end };
+    }
+
+    const grouped = await Expense.aggregate([
+      { $match: matchStage },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$date" }
+          },
+          expenses: { $push: "$$ROOT" },
+        },
+      },
+      { $sort: { "_id": -1 } }, // Latest dates first
+    ]);
+
+    // Pagination (each page = one date group)
+    const totalPages = grouped.length;
+    const paginated = grouped.slice((page - 1) * limit, page * limit);
 
     return res.status(200).json({
       success: true,
-      message: 'Expenses fetched successfully',
-      data: expenses
+      message: 'Expenses grouped by date',
+      data: paginated,
+      totalPages,
+      currentPage: Number(page),
     });
   } catch (error) {
-    console.error("Error fetching expenses:", error);
+    console.error("Error fetching grouped expenses:", error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
 
 // =======================
 // ✅ Delete Expense

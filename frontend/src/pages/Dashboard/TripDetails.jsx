@@ -282,12 +282,18 @@ const handleDeleteIncome = async (incomeId) => {
               {new Date(trip.startDate).toLocaleDateString()} –{" "}
               {new Date(trip.endDate).toLocaleDateString()}
             </span>
-            <span className="text-xs text-gray-500 cursor-pointer">
-              onClick={async () => {
-                try {
-                  const newVisibility = trip.visibility === "group" ? "private" : "group";
-                  const res = await axiosInstance.patch(
-                    API_PATHS.TRIP.UPDATE_VISIBILITY(trip._id),
+
+
+            <span className={`cursor-pointer text-xs px-2 py-1 rounded ${
+              trip.visibility === "group"
+                ? "bg-green-100 text-green-600"
+                : "bg-gray-100 text-gray-600"
+            }`}
+            onClick={async () => {
+              try {
+                const newVisibility = trip.visibility === "group" ? "private" : "group";
+                const res = await axiosInstance.patch(
+                  API_PATHS.TRIP.UPDATE_VISIBILITY(trip._id),
                   { visibility: newVisibility }
                 );
                 setTrip(res.data.data); // ✅ update state with new trip
@@ -297,11 +303,7 @@ const handleDeleteIncome = async (incomeId) => {
                 toast.error("Failed to update visibility");
               }
             }}
-            className={`cursor-pointer text-xs px-2 py-1 rounded ${
-              trip.visibility === "group"
-                ? "bg-green-100 text-green-600"
-                : "bg-gray-100 text-gray-600"
-            }`}
+          >
             {trip.visibility === "group" ? "🌍 Group" : "🔒 Private"}
           </span>
 

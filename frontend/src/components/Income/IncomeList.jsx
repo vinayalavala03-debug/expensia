@@ -12,15 +12,17 @@ const IncomeList = ({
   onPageChange,
   onDatePick,
 }) => {
+  // ✅ Generate page numbers (max 5 visible at once)
   const getPageNumbers = () => {
-    if (totalPages <= 1) return [];
     const pages = [];
     const maxVisible = 5;
     let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
     let end = Math.min(totalPages, start + maxVisible - 1);
+
     if (end - start < maxVisible - 1) {
       start = Math.max(1, end - maxVisible + 1);
     }
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
@@ -32,13 +34,17 @@ const IncomeList = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h5 className="text-lg">Income by Date</h5>
+
         <div className="flex gap-2 items-center">
+          {/* Date Picker */}
           <input
             type="date"
             defaultValue={new Date().toISOString().split("T")[0]}
             onChange={(e) => onDatePick(e.target.value)}
             className="border rounded px-2 py-1 text-sm"
           />
+
+          {/* Download Button */}
           <button
             className="card-btn flex items-center gap-1"
             onClick={onDownload}
@@ -53,22 +59,26 @@ const IncomeList = ({
       {groupedIncomes && groupedIncomes.length > 0 ? (
         groupedIncomes.map((group) => (
           <div key={group._id} className="mt-4">
+            {/* Group Date */}
             <h6 className="font-semibold text-gray-700 mb-2">
-              {moment(group._id).format("DD MMM YYYY")}
+              {moment(group._id, "YYYY-MM-DD").format("DD MMM YYYY")}
             </h6>
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              {group.incomes.map((income) => (
-                <TransactionInfoCard
-                  key={income._id}
-                  title={income.source}
-                  amount={income.amount}
-                  date={moment(income.date).format("DD MMM YYYY")}
-                  type="income"
-                  icon={income.icon}
-                  description={income.description}
-                  onDelete={() => onDelete(income._id)}
-                />
-              ))}
+
+            {/* Incomes for this date */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.isArray(group.incomes) &&
+                group.incomes.map((income) => (
+                  <TransactionInfoCard
+                    key={income._id}
+                    title={income.source}
+                    amount={income.amount}
+                    date={moment(income.date).format("DD MMM YYYY")}
+                    type="income"
+                    icon={income.icon}
+                    description={income.description}
+                    onDelete={() => onDelete(income._id)}
+                  />
+                ))}
             </div>
           </div>
         ))
@@ -76,9 +86,10 @@ const IncomeList = ({
         <p className="text-gray-500 mt-4 text-sm">No incomes found.</p>
       )}
 
-      {/* Pagination */}
+      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-6 gap-2">
+          {/* Prev */}
           <button
             disabled={currentPage <= 1}
             onClick={() => onPageChange(currentPage - 1)}
@@ -90,6 +101,8 @@ const IncomeList = ({
           >
             Prev
           </button>
+
+          {/* Page Numbers */}
           {getPageNumbers().map((page) => (
             <button
               key={page}
@@ -103,6 +116,8 @@ const IncomeList = ({
               {page}
             </button>
           ))}
+
+          {/* Next */}
           <button
             disabled={currentPage >= totalPages}
             onClick={() => onPageChange(currentPage + 1)}

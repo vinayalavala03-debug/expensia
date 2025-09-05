@@ -48,8 +48,24 @@ const TripDetails = () => {
     data: null,
   });
 
+  // Pagination + date filter state
+  const [groupedExpenses, setGroupedExpenses] = useState([]);
+  const [expensePage, setExpensePage] = useState(1);
+  const [expenseTotalPages, setExpenseTotalPages] = useState(1);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0] // default today
+  );
+
+  const [groupedIncomes, setGroupedIncomes] = useState([]);
+const [incomePage, setIncomePage] = useState(1);
+const [incomeTotalPages, setIncomeTotalPages] = useState(1);
+const [selectedIncomeDate, setSelectedIncomeDate] = useState(
+  new Date().toISOString().split("T")[0]
+);
+
+
   // Local UI state for participants & places
-  const [participantEmailsInput, setParticipantEmailsInput] = useState(""); // comma/space separated emails
+  const [participantEmailsInput, setParticipantEmailsInput] = useState("");
   const [newPlace, setNewPlace] = useState({
     name: "",
     location: "",
@@ -71,6 +87,36 @@ const TripDetails = () => {
       setLoading(false);
     }
   };
+
+  const fetchGroupedExpenses = async (page = 1, date = selectedDate) => {
+    try {
+      const res = await axiosInstance.get(API_PATHS.EXPENSE.GET_ALL_EXPENSE, {
+        params: { page, limit: 1, date },
+      });
+      setGroupedExpenses(res.data.data || []);
+      setExpenseTotalPages(res.data.totalPages || 1);
+      setExpensePage(res.data.currentPage || 1);
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+      toast.error("Failed to fetch expenses");
+    }
+  };
+
+  //------------//
+  const fetchGroupedIncomes = async (page = 1, date = selectedIncomeDate) => {
+  try {
+    const res = await axiosInstance.get(API_PATHS.INCOME.GET_ALL_INCOME, {
+      params: { page, limit: 1, date },
+    });
+    setGroupedIncomes(res.data.data || []);
+    setIncomeTotalPages(res.data.totalPages || 1);
+    setIncomePage(res.data.currentPage || 1);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    toast.error("Failed to fetch incomes");
+  }
+};
+
 
   // ---------- Participants actions ----------
   const handleAddParticipants = async () => {
@@ -114,19 +160,11 @@ const TripDetails = () => {
   // ---------- Expense actions ----------
   const handleAddExpense = async (expense) => {
     try {
-      const res = await axiosInstance.post(
-        API_PATHS.TRIP.ADD_EXPENSE_TO_TRIP(id),
-        expense
-      );
-      const newExpense = res.data.data;
-
-      setTrip((prev) => ({
-        ...prev,
-        expenses: [...(prev?.expenses || []), newExpense],
-      }));
-
+      await axiosInstance.post(API_PATHS.TRIP.ADD_EXPENSE_TO_TRIP(id), expense);
       toast.success("Expense added to trip");
       setOpenExpenseModal(false);
+      fetchTripDetails();
+      fetchGroupedExpenses(1, selectedDate); // refresh
     } catch (err) {
       console.error(err.response?.data || err.message);
       toast.error("Failed to add expense");
@@ -139,6 +177,7 @@ const TripDetails = () => {
       toast.success("Expense deleted");
       setOpenDeleteAlert({ show: false, type: null, data: null });
       fetchTripDetails();
+      fetchGroupedExpenses(expensePage, selectedDate); // refresh
     } catch (err) {
       console.error(err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Failed to delete expense");
@@ -147,30 +186,30 @@ const TripDetails = () => {
 
   // ---------- Income actions ----------
   const handleAddIncome = async (income) => {
-    try {
-      await axiosInstance.post(API_PATHS.TRIP.ADD_INCOME_TO_TRIP(id), income);
-      toast.success("Income added to trip");
-      setOpenIncomeModal(false);
-      fetchTripDetails();
-    } catch (err) {
-      toast.error("Failed to add income");
-    }
-  };
+  try {
+    await axiosInstance.post(API_PATHS.TRIP.ADD_INCOME_TO_TRIP(id), income);
+    toast.success("Income added to trip");
+    setOpenIncomeModal(false);
+    fetchTripDetails();
+    fetchGroupedIncomes(1, selectedIncomeDate); // refresh grouped
+  } catch (err) {
+    toast.error("Failed to add income");
+  }
+};
 
-  const handleDeleteIncome = async (incomeId) => {
-    try {
-      await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME(incomeId));
-      setOpenDeleteAlert({ show: false, type: null, data: null });
-      toast.success("Income deleted successfully");
-      fetchTripDetails();
-    } catch (error) {
-      console.error(
-        "Failed to delete income:",
-        error.response?.data?.message || error.message
-      );
-      toast.error("Failed to delete income");
-    }
-  };
+const handleDeleteIncome = async (incomeId) => {
+  try {
+    await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME(incomeId));
+    setOpenDeleteAlert({ show: false, type: null, data: null });
+    toast.success("Income deleted successfully");
+    fetchTripDetails();
+    fetchGroupedIncomes(incomePage, selectedIncomeDate); // refresh grouped
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    toast.error("Failed to delete income");
+  }
+};
+
 
   // ---------- Places actions ----------
   const handleAddPlace = async () => {
@@ -217,9 +256,12 @@ const TripDetails = () => {
   };
 
   useEffect(() => {
-    fetchTripDetails();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  fetchTripDetails();
+  fetchGroupedExpenses(1, selectedDate);
+  fetchGroupedIncomes(1, selectedIncomeDate);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [id]);
+
 
   // ---------- Financial totals ----------
   const totalIncome =
@@ -333,23 +375,31 @@ const TripDetails = () => {
           {activeTab === "expenses" && (
             <>
               <div className="flex flex-row items-center justify-between m-4">
-              <h3 className="text-lg font-semibold">Expenses</h3>
-              <button
-                className="add-btn"
-                onClick={() => setOpenExpenseModal(true)}
-              >
-                + Add Expense
-              </button>
-            </div>
+                <h3 className="text-lg font-semibold">Expenses</h3>
+                <button
+                  className="add-btn"
+                  onClick={() => setOpenExpenseModal(true)}
+                >
+                  + Add Expense
+                </button>
+              </div>
               <div className="mb-4">
                 <CustomLineChart data={trip?.expenses || []} />
               </div>
 
               <ExpenseList
-                transactions={trip?.expenses || []}
+                groupedExpenses={groupedExpenses}
                 onDelete={(id) =>
                   setOpenDeleteAlert({ show: true, type: "expense", data: id })
                 }
+                currentPage={expensePage}
+                totalPages={expenseTotalPages}
+                onPageChange={(page) => fetchGroupedExpenses(page, selectedDate)}
+                onDatePick={(date) => {
+                  setSelectedDate(date);
+                  fetchGroupedExpenses(1, date);
+                }}
+                onDownload={() => toast.success("Download not implemented yet")}
               />
             </>
           )}
@@ -358,26 +408,34 @@ const TripDetails = () => {
           {activeTab === "income" && (
             <>
               <div className="flex flex-col items-center text-center gap-2 m-4 sm:flex-row sm:justify-between">
-              <h3 className="text-lg font-semibold">Income</h3>
-              <button
-                className="add-btn"
-                onClick={() => setOpenIncomeModal(true)}
-              >
-                + Add Income
-              </button>
-            </div>
-
+                <h3 className="text-lg font-semibold">Income</h3>
+                <button
+                  className="add-btn"
+                  onClick={() => setOpenIncomeModal(true)}
+                >
+                  + Add Income
+                </button>
+              </div>
 
               <div className="mb-4">
                 <CustomBarChart data={trip?.incomes || []} />
               </div>
 
               <IncomeList
-                transactions={trip?.incomes || []}
-                onDelete={(id) =>
-                  setOpenDeleteAlert({ show: true, type: "income", data: id })
-                }
-              />
+              groupedIncomes={groupedIncomes}
+              onDelete={(id) =>
+                setOpenDeleteAlert({ show: true, type: "income", data: id })
+              }
+              currentPage={incomePage}
+              totalPages={incomeTotalPages}
+              onPageChange={(page) => fetchGroupedIncomes(page, selectedIncomeDate)}
+              onDatePick={(date) => {
+                setSelectedIncomeDate(date);
+                fetchGroupedIncomes(1, date);
+              }}
+              onDownload={() => toast.success("Download not implemented yet")}
+            />
+
             </>
           )}
         </div>

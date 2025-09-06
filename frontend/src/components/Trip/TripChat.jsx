@@ -3,7 +3,8 @@ import { io } from "socket.io-client";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS, BASE_URL } from "../../utils/apiPaths";
 import { postMessage } from "../../services/tripService";
-import Picker from "emoji-picker-react"; // ✅ Added
+import Picker from "emoji-picker-react";
+import toast from "react-hot-toast";
 
 export default function TripChat({ tripId }) {
   const [messages, setMessages] = useState([]);
@@ -15,7 +16,7 @@ export default function TripChat({ tripId }) {
   const endRef = useRef(null);
 
   const token = useMemo(() => localStorage.getItem("token"), []);
-  const apiBase = useMemo(() => BASE_URL || "http://localhost:4000", []);
+  const apiBase = useMemo(() => BASE_URL || "http://localhost:4001", []);
 
   const currentUserId = useMemo(() => {
     try {
@@ -58,10 +59,27 @@ export default function TripChat({ tripId }) {
       setConnecting(false);
     });
 
+    // 📩 Listen for new chat messages
     s.on("trip-message", (msg) => {
       setMessages((prev) => {
         if (prev.some((m) => m._id === msg._id)) return prev;
         return [...prev, msg];
+      });
+    });
+
+    // 🔔 Listen for trip notifications
+    s.on("trip-notification", (payload) => {
+      console.log("📢 Notification:", payload);
+
+      // Show toast popup
+      toast(payload.message, {
+        icon:
+          payload.type === "expense" ? "💸" :
+          payload.type === "income" ? "💰" :
+          payload.type === "place" ? "📍" :
+          payload.type === "participant-added" ? "➕" :
+          payload.type === "participant-removed" ? "➖" :
+          "💬",
       });
     });
 
@@ -221,7 +239,7 @@ export default function TripChat({ tripId }) {
           </svg>
         </button>
 
-        {/* ✅ Emoji Picker (Centered) */}
+        {/* ✅ Emoji Picker */}
         {showEmojiPicker && (
           <div
             ref={pickerRef}
@@ -247,7 +265,7 @@ export default function TripChat({ tripId }) {
           onKeyDown={onKeyDown}
         />
 
-        {/* ✅ Permanent Send Button */}
+        {/* Send Button */}
         <button
           className="bg-purple-500 text-white p-2 rounded-full hover:bg-purple-600 flex items-center justify-center"
           onClick={sendMessage}

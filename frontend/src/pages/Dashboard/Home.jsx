@@ -46,98 +46,97 @@ const Home = () => {
     }
   }, [])
 
-  return (
-    <DashboardLayout activeMenu="Dashboard">
-      <div className="my-5 mx-auto">
-        {dashboardData ? (
-          <>
-            {/* Overall Info Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <InfoCard
-                icon={<IoMdCard />}
-                label="Total Balance"
-                value={addThousandSeparator(dashboardData.totalBalance || 0)}
-                color="bg-primary"
-              />
+ return (
+  <DashboardLayout activeMenu="Dashboard">
+    <div className="my-5 mx-auto">
+      {dashboardData && (
+        <>
+          {/* Overall Info Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <InfoCard
+              icon={<IoMdCard />}
+              label="Total Balance"
+              value={addThousandSeparator(dashboardData.totalBalance || 0)}
+              color="bg-primary"
+            />
 
-              <InfoCard
-                icon={<LuWalletMinimal />}
-                label="Total Income"
-                value={addThousandSeparator(dashboardData.totalIncome || 0)}
-                color="bg-orange-500"
-              />
+            <InfoCard
+              icon={<LuWalletMinimal />}
+              label="Total Income"
+              value={addThousandSeparator(dashboardData.totalIncome || 0)}
+              color="bg-orange-500"
+            />
 
-              <InfoCard
-                icon={<LuHandCoins />}
-                label="Total Expense"
-                value={addThousandSeparator(dashboardData.totalExpense || 0)}
-                color="bg-red-500"
-              />
-            </div>
+            <InfoCard
+              icon={<LuHandCoins />}
+              label="Total Expense"
+              value={addThousandSeparator(dashboardData.totalExpense || 0)}
+              color="bg-red-500"
+            />
+          </div>
 
-            {/* Current Month Info Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-              <InfoCard
-                icon={<MdCalendarMonth />}
-                label={`${monthName} Balance`}
-                value={addThousandSeparator(dashboardData.currentMonth?.balance || 0)}
-                color="bg-green-600"
-              />
+          {/* Current Month Info Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <InfoCard
+              icon={<MdCalendarMonth />}
+              label={`${monthName} Balance`}
+              value={addThousandSeparator(dashboardData.currentMonth?.balance || 0)}
+              color="bg-green-600"
+            />
 
-              <InfoCard
-                icon={<MdCalendarMonth />}
-                label={`${monthName} Income`}
-                value={addThousandSeparator(dashboardData.currentMonth?.income || 0)}
-                color="bg-blue-500"
-              />
+            <InfoCard
+              icon={<MdCalendarMonth />}
+              label={`${monthName} Income`}
+              value={addThousandSeparator(dashboardData.currentMonth?.income || 0)}
+              color="bg-blue-500"
+            />
 
-              <InfoCard
-                icon={<MdCalendarMonth />}
-                label={`${monthName} Expense`}
-                value={addThousandSeparator(dashboardData.currentMonth?.expense || 0)}
-                color="bg-purple-500"
-              />
-            </div>
+            <InfoCard
+              icon={<MdCalendarMonth />}
+              label={`${monthName} Expense`}
+              value={addThousandSeparator(dashboardData.currentMonth?.expense || 0)}
+              color="bg-purple-500"
+            />
+          </div>
 
-            {/* Dashboard Widgets */}
-            <div className="grid md:grid-cols-2 gap-6 mt-6">
-              <RecentTransactions
-                transactions={dashboardData.recentTransactions || []}
-                onSeeMore={() => navigate('/expense')}
-              />
+          {/* Dashboard Widgets */}
+          <div className="grid md:grid-cols-2 gap-6 mt-6">
+            <RecentTransactions
+              transactions={dashboardData.recentTransactions || []}
+              onSeeMore={() => navigate('/expense')}
+            />
 
-              <FinanceOverview
-                totalBalance={dashboardData.totalBalance || 0}
-                totalIncome={dashboardData.totalIncome || 0}
-                totalExpense={dashboardData.totalExpense || 0}
-              />
+            <FinanceOverview
+              totalBalance={dashboardData.totalBalance || 0}
+              totalIncome={dashboardData.totalIncome || 0}
+              totalExpense={dashboardData.totalExpense || 0}
+            />
 
-              <ExpenseTransactions
-                transactions={dashboardData.last30DaysExpenses?.transactions || []}
-                onSeeMore={() => navigate('/expense')}
-              />
+            <ExpenseTransactions
+              transactions={dashboardData.last30DaysExpenses?.transactions || []}
+              onSeeMore={() => navigate('/expense')}
+            />
 
-              <Last30DaysExpenses
-                data={dashboardData.last30DaysExpenses?.transactions || []}
-              />
+            <Last30DaysExpenses
+              data={dashboardData.last30DaysExpenses?.transactions || []}
+            />
 
-              <RecentIncomeWithChart
-                data={dashboardData.last60DaysIncome?.transactions?.slice(0, 4) || []}
-                totalIncome={dashboardData.totalIncome || 0}
-              />
+            <RecentIncomeWithChart
+              data={dashboardData.last60DaysIncome?.transactions?.slice(0, 4) || []}
+              totalIncome={dashboardData.totalIncome || 0}
+            />
 
-              <RecentIncome
-                transactions={dashboardData.last60DaysIncome?.transactions || []}
-                onSeeMore={() => navigate('/income')}
-              />
-            </div>
-          </>
-        ) : (
-          <div className="text-center text-gray-500">No data available</div>
-        )}
-      </div>
-    </DashboardLayout>
-  )
+            <RecentIncome
+              transactions={dashboardData.last60DaysIncome?.transactions || []}
+              onSeeMore={() => navigate('/income')}
+            />
+          </div>
+        </>
+      )}
+    </div>
+  </DashboardLayout>
+)
+
 }
 
 export default Home

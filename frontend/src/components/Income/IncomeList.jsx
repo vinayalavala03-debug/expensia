@@ -1,4 +1,3 @@
-import React from "react";
 import { LuDownload } from "react-icons/lu";
 import TransactionInfoCard from "../Cards/TransactionInfoCard";
 import moment from "moment";
@@ -30,30 +29,35 @@ const IncomeList = ({
   };
 
   return (
-    <div className="card">
+    <div className="bg-white rounded-2xl shadow p-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h5 className="text-lg">Incomes by Date</h5>
+<div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+  <h5 className="text-lg font-semibold">Incomes by Date</h5>
 
-        <div className="flex gap-2 items-center">
-          {/* Date Picker */}
-          <input
-            type="date"
-            defaultValue={new Date().toISOString().split("T")[0]}
-            onChange={(e) => onDatePick(e.target.value)}
-            className="border rounded px-2 py-1 text-sm"
-          />
+  {/* ✅ Controls */}
+<div className="flex   sm:items-center sm:justify-between  gap-2">
+  {/* Date Picker on the left */}
+  <input
+    type="date"
+    defaultValue={new Date().toISOString().split("T")[0]}
+    onChange={(e) => onDatePick(e.target.value)}
+    className="card-btn"
+  />
 
-          {/* Download Button */}
-          <button
-            className="card-btn flex items-center gap-1"
-            onClick={onDownload}
-          >
-            <LuDownload className="text-base" />
-            Download
-          </button>
-        </div>
-      </div>
+  {/* Download Button on the right */}
+  <div className="flex justify-end w-full sm:w-auto">
+    <button
+      className="add-btn flex items-center gap-1"
+      onClick={onDownload}
+    >
+      <LuDownload className="text-sm sm:text-base" />
+      <span className="hidden sm:inline">Download</span>
+    </button>
+  </div>
+</div>
+
+</div>
+
 
       {/* Income Groups */}
       {groupedIncomes && groupedIncomes.length > 0 ? (
@@ -68,16 +72,19 @@ const IncomeList = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Array.isArray(group.incomes) &&
                 group.incomes.map((income) => (
-                  <TransactionInfoCard
-                    key={income._id}
-                    title={income.source}
-                    amount={income.amount}
-                    date={moment(income.date).format("DD MMM YYYY")}
-                    type="income"
-                    icon={income.icon}
-                    description={income.description}
-                    onDelete={() => onDelete(income._id)}
-                  />
+                  <div key={income._id} className="flex justify-center">
+                    <div className="w-full max-w-xs sm:max-w-sm md:max-w-none">
+                      <TransactionInfoCard
+                        title={income.source}
+                        amount={income.amount}
+                        date={moment(income.date).format("DD MMM YYYY")}
+                        type="income"
+                        icon={income.icon}
+                        description={income.description}
+                        onDelete={() => onDelete(income._id)}
+                      />
+                    </div>
+                  </div>
                 ))}
             </div>
           </div>
@@ -86,14 +93,14 @@ const IncomeList = ({
         <p className="text-gray-500 mt-4 text-sm">No incomes found.</p>
       )}
 
-      {/* Pagination Controls */}
+      {/* ✅ Pagination INSIDE the card */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-6 gap-2">
           {/* Prev */}
           <button
             disabled={currentPage <= 1}
             onClick={() => onPageChange(currentPage - 1)}
-            className={`px-3 py-1 rounded border ${
+            className={`px-2 py-0.5 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-lg border ${
               currentPage <= 1
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-white hover:bg-gray-100"
@@ -107,7 +114,7 @@ const IncomeList = ({
             <button
               key={page}
               onClick={() => onPageChange(page)}
-              className={`px-3 py-1 rounded border ${
+              className={`px-2 py-0.5 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-lg border ${
                 page === currentPage
                   ? "bg-purple-600 text-white border-purple-600"
                   : "bg-white hover:bg-gray-100"
@@ -121,7 +128,7 @@ const IncomeList = ({
           <button
             disabled={currentPage >= totalPages}
             onClick={() => onPageChange(currentPage + 1)}
-            className={`px-3 py-1 rounded border ${
+            className={`px-2 py-0.5 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-lg border ${
               currentPage >= totalPages
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-white hover:bg-gray-100"

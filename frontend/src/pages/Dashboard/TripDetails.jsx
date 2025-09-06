@@ -91,7 +91,7 @@ const [selectedIncomeDate, setSelectedIncomeDate] = useState(
   const fetchGroupedExpenses = async (page = 1, date = selectedDate) => {
     try {
       const res = await axiosInstance.get(API_PATHS.EXPENSE.GET_ALL_EXPENSE, {
-        params: { page, limit: 1, date },
+        params: { page, limit: 1, date, tripId: id },
       });
       setGroupedExpenses(res.data.data || []);
       setExpenseTotalPages(res.data.totalPages || 1);

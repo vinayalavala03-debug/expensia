@@ -65,7 +65,7 @@ const Login = () => {
             onChange = {({target}) => setEmail(target.value)}
             label= "Email Address"
             type = "email"
-            placeholder = "John@gmail.com"
+            placeholder = "user@gmail.com"
             />
 
             <Input

@@ -602,13 +602,14 @@ const handleDeleteIncome = async (incomeId) => {
         </div>
 
         {/* Group Chat */}
-        {trip?.visibility === "group" || (trip?.participants?.length ) > 1 && (
-          <div className="bg-white rounded-2xl shadow p-3">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Trip Chat 💬
-            </h3>
-            <TripChat tripId={trip._id} />
-          </div>
+        {(trip?.visibility === "group" || trip?.visibility === "private") &&
+          (trip?.participants?.length > 1) && (
+            <div className="bg-white rounded-2xl shadow p-3">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Trip Chat 💬
+              </h3>
+              <TripChat tripId={trip._id} />
+            </div>
         )}
 
         {/* Modals */}

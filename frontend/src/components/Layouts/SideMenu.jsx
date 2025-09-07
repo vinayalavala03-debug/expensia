@@ -75,7 +75,7 @@ const SideMenu = () => {
                 key={`menu_${idx}_${index}`}
                 className={`w-full flex items-center cursor-pointer justify-between text-sm px-3 py-2 rounded-lg mb-1 transition ${
                   isActive(item.path)
-                    ? "bg-gray-100 text-black-700 border-r-gray-400 font-medium"
+                    ? "bg-gray-200 text-black-700 border-r-gray-400 font-medium"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
                 onClick={() => navigate(item.path)}

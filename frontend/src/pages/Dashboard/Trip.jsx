@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
 import Modal from "../../components/Modal";
 import AddTripForm from "../../components/Trip/AddTripForm";
-import { getMyTrips, createTrip } from "../../services/tripService"; // ✅ use service layer
+import { getMyTrips, createTrip } from "../../services/tripService"; 
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { CalendarDays, MapPin, PlusCircle } from "lucide-react";
@@ -52,15 +52,15 @@ const Trip = () => {
 
   return (
     <DashboardLayout activeMenu="Trips">
-      <div className="my-8 mx-auto max-w-6xl">
+      <div className="my-5 mx-auto max-w-6xl">
         <div className="bg-white rounded-2xl shadow p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-lg text-gray-800">
                 Trip Overview
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-gray-500">
                 Manage and track your travel plans easily.
               </p>
             </div>

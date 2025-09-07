@@ -47,7 +47,7 @@ const SideMenu = () => {
         { label: "Capital", icon: PiggyBank, path: "/" },
         { label: "Vaults", icon: Wallet, path: "/" },
         { label: "Reports", icon: FileText, path: "/" },
-        { label: "Earnings", icon: CreditCard, path: "/", extra: "RS 120" },
+        { label: "Earnings", icon: CreditCard, path: "/", extra: "INR 120" },
       ],
     },
     {

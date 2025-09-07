@@ -60,7 +60,7 @@ const SideMenu = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="w-64 h-[calc(100vh-61px)] scroll-smooth bg-white border-r border-gray-200/50 flex flex-col justify-between sticky top-[61px] z-20">
+    <div className="w-60 h-[calc(100vh-61px)] scroll-smooth bg-white border-r border-gray-200/50 flex flex-col justify-between sticky top-[61px] z-20">
       {/* Menu */}
       <div className="p-4 overflow-y-auto">
         {menuSections.map((section, idx) => (

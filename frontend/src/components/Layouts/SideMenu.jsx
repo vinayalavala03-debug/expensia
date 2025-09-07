@@ -73,28 +73,37 @@ const SideMenu = () => {
             {section.items.map((item, index) => (
               <button
                 key={`menu_${idx}_${index}`}
-                className={`w-full flex items-center cursor-pointer justify-between text-sm px-3 py-2 rounded-lg mb-1 transition ${
-                  isActive(item.path)
-                    ? "bg-gray-200 text-black-700 border-r-gray-400 font-medium"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
+                className={`relative w-full flex items-center cursor-pointer justify-between text-sm px-3 py-2 rounded-lg mb-1 
+                  transition-all duration-200 ease-in-out
+                  ${
+                    isActive(item.path)
+                      ? "bg-gray-200 text-black font-medium"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
                 onClick={() => navigate(item.path)}
               >
+                {/* Active indicator line INSIDE the button */}
+                {isActive(item.path) && (
+                  <span className="absolute right-1 top-1 bottom-1 w-1 bg-black rounded-full transition-all duration-300 ease-in-out"></span>
+                )}
+
                 <div className="flex items-center gap-3">
                   <item.icon
                     size={18}
-                    className={`${
-                      isActive(item.path) ? "text-black-700" : "text-gray-500"
+                    className={`transition-colors duration-200 ${
+                      isActive(item.path) ? "text-black" : "text-gray-500"
                     }`}
                   />
                   {item.label}
                 </div>
+
                 {item.extra && (
                   <span className="text-emerald-500 text-xs font-semibold">
                     {item.extra}
                   </span>
                 )}
               </button>
+
             ))}
           </div>
         ))}

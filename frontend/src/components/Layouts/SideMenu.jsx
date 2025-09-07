@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import CharAvatar from "../Cards/CharAvatar";
-import { FaCalculator, FaSuitcaseRolling } from "react-icons/fa";
 import {
   Home,
   DollarSign,
@@ -15,6 +14,9 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  IndianRupee,
+  Briefcase,
+  Calculator,
 } from "lucide-react";
 
 const SideMenu = () => {
@@ -33,10 +35,10 @@ const SideMenu = () => {
       title: "GENERAL",
       items: [
         { label: "Dashboard", icon: Home, path: "/dashboard" },
-        { label: "Income", icon: DollarSign, path: "/income" },
+        { label: "Income", icon: IndianRupee, path: "/income" },
         { label: "Expense", icon: CreditCard, path: "/expense" },
-        { label: "Trips", icon: FaSuitcaseRolling, path: "/dashboard/trips" },
-        { label: "Calculator", icon: FaCalculator, path: "/calculator" },
+        { label: "Trips", icon: Briefcase, path: "/dashboard/trips" },
+        { label: "Calculator", icon: Calculator, path: "/calculator" },
       ],
     },
     {
@@ -51,7 +53,7 @@ const SideMenu = () => {
     {
       title: "",
       items: [
-        { label: "Settings", icon: Settings, path: "/" },
+        { label: "Settings", icon: Settings, path: "/settings" },
         { label: "Help", icon: HelpCircle, path: "/" },
       ],
     },
@@ -112,7 +114,7 @@ const SideMenu = () => {
       <div>
         <div className="pl-4 pr-4">
           <button
-            className="w-full  flex items-center cursor-pointer gap-3 text-sm px-3 py-2 rounded-lg mb-4 transition text-gray-600 hover:bg-gray-100"
+            className="w-full flex items-center cursor-pointer gap-3 text-sm px-3 py-2 rounded-lg mb-4 transition text-gray-600 hover:bg-gray-100"
             onClick={handleLogout}
           >
             <LogOut size={18} className="text-gray-500" />

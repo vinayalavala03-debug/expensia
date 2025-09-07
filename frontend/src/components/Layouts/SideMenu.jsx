@@ -66,7 +66,7 @@ const SideMenu = () => {
       {/* Menu */}
       <div className="p-4 overflow-y-auto">
         {menuSections.map((section, idx) => (
-          <div key={idx} className="mb-6">
+          <div key={idx} >
             {section.title && (
               <p className="text-xs font-semibold text-gray-400 px-3 mb-2">
                 {section.title}

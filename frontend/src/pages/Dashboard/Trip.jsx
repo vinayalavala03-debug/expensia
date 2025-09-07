@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
 import Modal from "../../components/Modal";
 import AddTripForm from "../../components/Trip/AddTripForm";
-import { getMyTrips, createTrip } from "../../services/tripService"; 
+import { getMyTrips, createTrip } from "../../services/tripService"; // ✅ use service layer
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { CalendarDays, MapPin, PlusCircle } from "lucide-react";
@@ -92,7 +92,7 @@ const Trip = () => {
                   to={`/dashboard/trips/${trip._id}`}
                   className="group rounded-xl p-5 transition border border-gray-200 hover:shadow-md"
                 >
-                  <h3 className="text-base font-semibold text-gray-800 group-hover:text-primary">
+                  <h3 className="text-base font-semibold text-gray-800">
                     {trip.name}
                   </h3>
 

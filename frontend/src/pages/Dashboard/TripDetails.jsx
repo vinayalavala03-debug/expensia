@@ -106,7 +106,7 @@ const [selectedIncomeDate, setSelectedIncomeDate] = useState(
   const fetchGroupedIncomes = async (page = 1, date = selectedIncomeDate) => {
   try {
     const res = await axiosInstance.get(API_PATHS.INCOME.GET_ALL_INCOME, {
-      params: { page, limit: 1, date },
+      params: { page, limit: 1, date, tripId: id },
     });
     setGroupedIncomes(res.data.data || []);
     setIncomeTotalPages(res.data.totalPages || 1);
@@ -296,8 +296,9 @@ const handleDeleteIncome = async (incomeId) => {
                   API_PATHS.TRIP.UPDATE_VISIBILITY(trip._id),
                   { visibility: newVisibility }
                 );
-                setTrip(res.data.data); // ✅ update state with new trip
+                setTrip(res.data.data); 
                 toast.success(`Trip is now ${newVisibility}`);
+                window.location.reload();
               } catch (err) {
                 console.error(err);
                 toast.error("Failed to update visibility");
@@ -591,7 +592,7 @@ const handleDeleteIncome = async (incomeId) => {
                       } hover:opacity-80`}
                       onClick={() => toggleVisited(p._id, p.visited)}
                     >
-                      {p.visited ? "Visited ✅" : "Mark visited"}
+                      {p.visited ? "Visited" : "Mark visited"}
                     </button>
                   </div>
                 ))

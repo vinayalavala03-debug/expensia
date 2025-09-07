@@ -21,7 +21,21 @@ const Home = () => {
   useUserAuth()
   const navigate = useNavigate()
 
-  const [dashboardData, setDashboardData] = useState(null)
+  const [dashboardData, setDashboardData] = useState({
+    totalBalance: 0,
+    totalIncome: 0,
+    totalExpense: 0,
+    currentMonth: {
+      balance: 0,
+      income: 0,
+      expense: 0,
+    },
+    recentTransactions: [],
+    last30DaysExpenses: { transactions: [] },
+    last60DaysIncome: { transactions: [] },
+  })
+
+  const [loading, setLoading] = useState(true)
 
   // get current month name (e.g., September)
   const monthName = new Date().toLocaleString('default', { month: 'long' })
@@ -36,6 +50,8 @@ const Home = () => {
         }
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error)
+      } finally {
+        if (isMounted) setLoading(false)
       }
     }
 
@@ -46,97 +62,104 @@ const Home = () => {
     }
   }, [])
 
- return (
-  <DashboardLayout activeMenu="Dashboard">
-    <div className="my-5 mx-auto">
-      {dashboardData && (
-        <>
-          {/* Overall Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <InfoCard
-              icon={<IoMdCard />}
-              label="Total Balance"
-              value={addThousandSeparator(dashboardData.totalBalance || 0)}
-              color="bg-primary"
-            />
+  return (
+    <DashboardLayout activeMenu="Dashboard">
+      <div className="my-5 mx-auto">
+        {/* Overall Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <InfoCard
+            icon={<IoMdCard />}
+            label="Total Balance"
+            value={addThousandSeparator(dashboardData.totalBalance)}
+            color="bg-primary"
+            loading={loading}
+          />
 
-            <InfoCard
-              icon={<LuWalletMinimal />}
-              label="Total Income"
-              value={addThousandSeparator(dashboardData.totalIncome || 0)}
-              color="bg-orange-500"
-            />
+          <InfoCard
+            icon={<LuWalletMinimal />}
+            label="Total Income"
+            value={addThousandSeparator(dashboardData.totalIncome)}
+            color="bg-orange-500"
+            loading={loading}
+          />
 
-            <InfoCard
-              icon={<LuHandCoins />}
-              label="Total Expense"
-              value={addThousandSeparator(dashboardData.totalExpense || 0)}
-              color="bg-red-500"
-            />
-          </div>
+          <InfoCard
+            icon={<LuHandCoins />}
+            label="Total Expense"
+            value={addThousandSeparator(dashboardData.totalExpense)}
+            color="bg-red-500"
+            loading={loading}
+          />
+        </div>
 
-          {/* Current Month Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <InfoCard
-              icon={<MdCalendarMonth />}
-              label={`${monthName} Balance`}
-              value={addThousandSeparator(dashboardData.currentMonth?.balance || 0)}
-              color="bg-green-600"
-            />
+        {/* Current Month Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <InfoCard
+            icon={<MdCalendarMonth />}
+            label={`${monthName} Balance`}
+            value={addThousandSeparator(dashboardData.currentMonth.balance)}
+            color="bg-green-600"
+            loading={loading}
+          />
 
-            <InfoCard
-              icon={<MdCalendarMonth />}
-              label={`${monthName} Income`}
-              value={addThousandSeparator(dashboardData.currentMonth?.income || 0)}
-              color="bg-blue-500"
-            />
+          <InfoCard
+            icon={<MdCalendarMonth />}
+            label={`${monthName} Income`}
+            value={addThousandSeparator(dashboardData.currentMonth.income)}
+            color="bg-blue-500"
+            loading={loading}
+          />
 
-            <InfoCard
-              icon={<MdCalendarMonth />}
-              label={`${monthName} Expense`}
-              value={addThousandSeparator(dashboardData.currentMonth?.expense || 0)}
-              color="bg-purple-500"
-            />
-          </div>
+          <InfoCard
+            icon={<MdCalendarMonth />}
+            label={`${monthName} Expense`}
+            value={addThousandSeparator(dashboardData.currentMonth.expense)}
+            color="bg-purple-500"
+            loading={loading}
+          />
+        </div>
 
-          {/* Dashboard Widgets */}
-          <div className="grid md:grid-cols-2 gap-6 mt-6">
-            <RecentTransactions
-              transactions={dashboardData.recentTransactions || []}
-              onSeeMore={() => navigate('/expense')}
-            />
+        {/* Dashboard Widgets */}
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
+          <RecentTransactions
+            transactions={dashboardData.recentTransactions}
+            onSeeMore={() => navigate('/expense')}
+            loading={loading}
+          />
 
-            <FinanceOverview
-              totalBalance={dashboardData.totalBalance || 0}
-              totalIncome={dashboardData.totalIncome || 0}
-              totalExpense={dashboardData.totalExpense || 0}
-            />
+          <FinanceOverview
+            totalBalance={dashboardData.totalBalance}
+            totalIncome={dashboardData.totalIncome}
+            totalExpense={dashboardData.totalExpense}
+            loading={loading}
+          />
 
-            <ExpenseTransactions
-              transactions={dashboardData.last30DaysExpenses?.transactions || []}
-              onSeeMore={() => navigate('/expense')}
-            />
+          <ExpenseTransactions
+            transactions={dashboardData.last30DaysExpenses.transactions}
+            onSeeMore={() => navigate('/expense')}
+            loading={loading}
+          />
 
-            <Last30DaysExpenses
-              data={dashboardData.last30DaysExpenses?.transactions || []}
-            />
+          <Last30DaysExpenses
+            data={dashboardData.last30DaysExpenses.transactions}
+            loading={loading}
+          />
 
-            <RecentIncomeWithChart
-              data={dashboardData.last60DaysIncome?.transactions?.slice(0, 4) || []}
-              totalIncome={dashboardData.totalIncome || 0}
-            />
+          <RecentIncomeWithChart
+            data={dashboardData.last60DaysIncome.transactions.slice(0, 4)}
+            totalIncome={dashboardData.totalIncome}
+            loading={loading}
+          />
 
-            <RecentIncome
-              transactions={dashboardData.last60DaysIncome?.transactions || []}
-              onSeeMore={() => navigate('/income')}
-            />
-          </div>
-        </>
-      )}
-    </div>
-  </DashboardLayout>
-)
-
+          <RecentIncome
+            transactions={dashboardData.last60DaysIncome.transactions}
+            onSeeMore={() => navigate('/income')}
+            loading={loading}
+          />
+        </div>
+      </div>
+    </DashboardLayout>
+  )
 }
 
 export default Home

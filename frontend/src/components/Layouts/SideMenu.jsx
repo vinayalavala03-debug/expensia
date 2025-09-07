@@ -47,13 +47,13 @@ const SideMenu = () => {
         { label: "Capital", icon: PiggyBank, path: "/" },
         { label: "Vaults", icon: Wallet, path: "/" },
         { label: "Reports", icon: FileText, path: "/" },
-        { label: "Earnings", icon: CreditCard, path: "/", extra: "USD 120" },
+        { label: "Earnings", icon: CreditCard, path: "/", extra: "RS 120" },
       ],
     },
     {
       title: "",
       items: [
-        { label: "Settings", icon: Settings, path: "/settings" },
+        { label: "Settings", icon: Settings, path: "/" },
         { label: "Help", icon: HelpCircle, path: "/" },
       ],
     },

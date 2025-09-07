@@ -1,12 +1,26 @@
 import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { SIDE_MENU_DATA } from "../../utils/data";
+import { useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import CharAvatar from "../Cards/CharAvatar";
+import { FaCalculator, FaSuitcaseRolling } from "react-icons/fa";
+import {
+  Home,
+  DollarSign,
+  CreditCard,
+  BarChart3,
+  Layers,
+  PiggyBank,
+  Wallet,
+  FileText,
+  Settings,
+  HelpCircle,
+  LogOut,
+} from "lucide-react";
 
-const SideMenu = ({ activeMenu }) => {
+const SideMenu = () => {
   const { user, clearUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.clear();
@@ -14,48 +28,133 @@ const SideMenu = ({ activeMenu }) => {
     navigate("/login");
   };
 
-  const handleClick = (item) => {
-    if (item.isLogout) {
-      handleLogout();
-    } else if (item.path) {
-      navigate(item.path);
-    }
-  };
+  const menuSections = [
+    {
+      title: "GENERAL",
+      items: [
+        { label: "Dashboard", icon: Home, path: "/dashboard" },
+        { label: "Income", icon: DollarSign, path: "/income" },
+        { label: "Expense", icon: CreditCard, path: "/expense" },
+        { label: "Trips", icon: FaSuitcaseRolling, path: "/dashboard/trips" },
+        { label: "Calculator", icon: FaCalculator, path: "/calculator" },
+      ],
+    },
+    {
+      title: "SUPPORT",
+      items: [
+        { label: "Capital", icon: PiggyBank, path: "/" },
+        { label: "Vaults", icon: Wallet, path: "/" },
+        { label: "Reports", icon: FileText, path: "/" },
+        { label: "Earnings", icon: CreditCard, path: "/", extra: "USD 120" },
+      ],
+    },
+    {
+      title: "",
+      items: [
+        { label: "Settings", icon: Settings, path: "/" },
+        { label: "Help", icon: HelpCircle, path: "/" },
+      ],
+    },
+  ];
+
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 p-5 sticky top-[61px] z-20">
-      <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7">
-        {user&&user?.profileImageUrl ? (
-          <img
-            src={user.profileImageUrl}
-            alt="Profile"
-            className="w-20 h-20 rounded-full bg-slate-400 object-cover border-2 border-primary"
-          />
-        ) : (
-          <CharAvatar
-            fullName={user?.fullName}
-            width="w-20"
-            height="h-20"
-            fontSize="text-2xl"
-          />
-        )}
-        <h5 className="text-gray-950 font-medium leading-6">
-          {user?.fullName || ""}
-        </h5>
+    <div className="w-64 h-[calc(100vh-61px)] scroll-smooth bg-white border-r border-gray-200/50 flex flex-col justify-between sticky top-[61px] z-20">
+      {/* Menu */}
+      <div className="p-4 overflow-y-auto">
+        {menuSections.map((section, idx) => (
+          <div key={idx} className="mb-6">
+            {section.title && (
+              <p className="text-xs font-semibold text-gray-400 px-3 mb-2">
+                {section.title}
+              </p>
+            )}
+            {section.items.map((item, index) => (
+              <button
+                key={`menu_${idx}_${index}`}
+                className={`w-full flex items-center cursor-pointer justify-between text-sm px-3 py-2 rounded-lg mb-1 transition ${
+                  isActive(item.path)
+                    ? "bg-gray-100 text-black-700 border-r-gray-400 font-medium"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+                onClick={() => navigate(item.path)}
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon
+                    size={18}
+                    className={`${
+                      isActive(item.path) ? "text-black-700" : "text-gray-500"
+                    }`}
+                  />
+                  {item.label}
+                </div>
+                {item.extra && (
+                  <span className="text-emerald-500 text-xs font-semibold">
+                    {item.extra}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        ))}
       </div>
 
-      {SIDE_MENU_DATA.map((item, index) => (
-        <button
-          key={`menu_${index}`}
-          className={`w-full flex items-center gap-4 text-[15px] ${
-            activeMenu === item.label ? "text-white bg-primary" : ""
-          } py-3 px-6 rounded-lg mb-3`}
-          onClick={() => handleClick(item)}
-        >
-          <item.icon className="text-xl" />
-          {item.label}
-        </button>
-      ))}
+      <div>
+        <div className="pl-4 pr-4">
+          <button
+            className="w-full  flex items-center cursor-pointer gap-3 text-sm px-3 py-2 rounded-lg mb-4 transition text-gray-600 hover:bg-gray-100"
+            onClick={handleLogout}
+          >
+            <LogOut size={18} className="text-gray-500" />
+            Log Out
+          </button>
+        </div>
+        {/* Bottom Section (Logout + Account) */}
+      <div className="p-4 border-t border-gray-200/50">
+        {/* Logout Button */}
+
+        {/* Account Card */}
+        <div className="w-full  flex items-center gap-3 text-sm px-2 py-1 rounded-lg mb transition text-gray-600 hover:bg-gray-100 ">
+          <div className="flex cursor-pointer items-center gap-2">
+            {user && user?.profileImageUrl ? (
+              <img
+                src={user.profileImageUrl}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover border"
+              />
+            ) : (
+              <CharAvatar
+                fullName={user?.fullName}
+                width="w-8"
+                height="h-8"
+                fontSize="text-xs"
+              />
+            )}
+            <div className="flex flex-col leading-tight">
+              <p className="text-xs font-medium text-gray-900 truncate max-w-[120px]">
+                {user?.fullName}
+              </p>
+              <p className="text-[11px] text-gray-500 truncate max-w-[120px]">
+                {user?.email}
+              </p>
+            </div>
+          </div>
+
+          {/* Dropdown Arrow */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+      </div>
     </div>
   );
 };

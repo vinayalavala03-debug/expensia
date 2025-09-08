@@ -51,7 +51,7 @@ const IncomeList = ({
       onClick={onDownload}
     >
       <LuDownload className="text-sm sm:text-base" />
-      <span className="hidden sm:inline">Download</span>
+      <span className="sm:inline">Download</span>
     </button>
   </div>
 </div>

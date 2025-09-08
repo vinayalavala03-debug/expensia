@@ -1,10 +1,10 @@
 // public/service-worker.js
 
-const CACHE_NAME = "app-cache-v1";
+const CACHE_NAME = "app-cache-v2";
 
-const PRECACHE_ASSETS = ["/", "/index.html"];
+const PRECACHE_ASSETS = ["/", "/index.html", "/offline.html"];
 
-// Install: cache assets
+// Install: cache important assets
 self.addEventListener("install", (event) => {
   console.log("SW installed");
   self.skipWaiting();
@@ -18,7 +18,7 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Activate: remove old caches
+// Activate: cleanup old caches
 self.addEventListener("activate", (event) => {
   console.log("SW activated");
   event.waitUntil(
@@ -32,6 +32,8 @@ self.addEventListener("activate", (event) => {
 // Fetch handler
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
+
+  // 🚫 Skip API & socket requests
   if (url.pathname.startsWith("/api") || url.pathname.startsWith("/socket.io")) {
     return;
   }
@@ -42,11 +44,7 @@ self.addEventListener("fetch", (event) => {
 
       return fetch(event.request)
         .then((response) => {
-          if (
-            !response ||
-            response.status !== 200 ||
-            response.type !== "basic"
-          ) {
+          if (!response || response.status !== 200 || response.type !== "basic") {
             return response;
           }
 
@@ -57,9 +55,11 @@ self.addEventListener("fetch", (event) => {
 
           return response;
         })
-        .catch((err) => {
-          console.warn("Fetch failed:", err);
-          return caches.match("/index.html"); // fallback
+        .catch(() => {
+          // ✅ Offline fallback
+          if (event.request.mode === "navigate") {
+            return caches.match("/offline.html");
+          }
         });
     })
   );

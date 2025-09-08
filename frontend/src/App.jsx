@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Toaster } from "react-hot-toast";
 import UserProvider from "./context/UserContext";
 import Calculator from "./components/Layouts/Calculator";
+import Help from "./pages/Dashboard/Help";
 
 // Lazy imports
 const Signup = lazy(() => import("./pages/Auth/Signup"));
@@ -30,6 +31,7 @@ const App = () => {
             <Route path="/dashboard/trips" element={<Trip />} />
             <Route path="/dashboard/trips/:id" element={<TripDetails />} />
             <Route path="/calculator" element={<Calculator />} />
+            <Route path="/help" element={<Help />} />
           </Routes>
         </Suspense>
       </Router>

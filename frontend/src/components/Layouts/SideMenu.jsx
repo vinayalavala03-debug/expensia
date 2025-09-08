@@ -54,7 +54,7 @@ const SideMenu = () => {
       title: "",
       items: [
         { label: "Settings", icon: Settings, path: "/" },
-        { label: "Help", icon: HelpCircle, path: "/" },
+        { label: "Help", icon: HelpCircle, path: "/help" },
       ],
     },
   ];

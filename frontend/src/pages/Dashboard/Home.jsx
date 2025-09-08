@@ -36,6 +36,7 @@ const Home = () => {
   })
 
   const [loading, setLoading] = useState(true)
+  const [view, setView] = useState('overall') // overall | monthly
 
   // get current month name (e.g., September)
   const monthName = new Date().toLocaleString('default', { month: 'long' })
@@ -65,59 +66,84 @@ const Home = () => {
   return (
     <DashboardLayout activeMenu="Dashboard">
       <div className="my-5 mx-auto">
-        {/* Overall Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <InfoCard
-            icon={<IoMdCard />}
-            label="Total Balance"
-            value={addThousandSeparator(dashboardData.totalBalance)}
-            color="bg-primary"
-            loading={loading}
-          />
-
-          <InfoCard
-            icon={<LuWalletMinimal />}
-            label="Total Income"
-            value={addThousandSeparator(dashboardData.totalIncome)}
-            color="bg-orange-500"
-            loading={loading}
-          />
-
-          <InfoCard
-            icon={<LuHandCoins />}
-            label="Total Expense"
-            value={addThousandSeparator(dashboardData.totalExpense)}
-            color="bg-red-500"
-            loading={loading}
-          />
+        {/* Toggle Buttons */}
+        <div className="flex justify-center mb-2">
+          <button
+            onClick={() => setView('overall')}
+            className={`px-4 py-2 ${
+              view === 'overall'
+                ? 'text-primary font-semibold border-b-2 border-primary'
+                : 'text-gray-600'
+            }`}
+          >
+            Overall
+          </button>
+          <button
+            onClick={() => setView('monthly')}
+            className={`px-4 py-2 ml-4 ${
+              view === 'monthly'
+                ? 'text-primary font-semibold border-b-2 border-primary'
+                : 'text-gray-600'
+            }`}
+          >
+            Monthly
+          </button>
         </div>
 
-        {/* Current Month Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <InfoCard
-            icon={<MdCalendarMonth />}
-            label={`${monthName} Balance`}
-            value={addThousandSeparator(dashboardData.currentMonth.balance)}
-            color="bg-green-600"
-            loading={loading}
-          />
+        {/* Info Cards */}
+        {view === 'overall' ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <InfoCard
+              icon={<IoMdCard />}
+              label="Total Balance"
+              value={addThousandSeparator(dashboardData.totalBalance)}
+              color="bg-primary"
+              loading={loading}
+            />
 
-          <InfoCard
-            icon={<MdCalendarMonth />}
-            label={`${monthName} Income`}
-            value={addThousandSeparator(dashboardData.currentMonth.income)}
-            color="bg-blue-500"
-            loading={loading}
-          />
+            <InfoCard
+              icon={<LuWalletMinimal />}
+              label="Total Income"
+              value={addThousandSeparator(dashboardData.totalIncome)}
+              color="bg-orange-500"
+              loading={loading}
+            />
 
-          <InfoCard
-            icon={<MdCalendarMonth />}
-            label={`${monthName} Expense`}
-            value={addThousandSeparator(dashboardData.currentMonth.expense)}
-            color="bg-purple-500"
-            loading={loading}
-          />
-        </div>
+            <InfoCard
+              icon={<LuHandCoins />}
+              label="Total Expense"
+              value={addThousandSeparator(dashboardData.totalExpense)}
+              color="bg-red-500"
+              loading={loading}
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <InfoCard
+              icon={<MdCalendarMonth />}
+              label={`${monthName} Balance`}
+              value={addThousandSeparator(dashboardData.currentMonth.balance)}
+              color="bg-green-600"
+              loading={loading}
+            />
+
+            <InfoCard
+              icon={<MdCalendarMonth />}
+              label={`${monthName} Income`}
+              value={addThousandSeparator(dashboardData.currentMonth.income)}
+              color="bg-blue-500"
+              loading={loading}
+            />
+
+            <InfoCard
+              icon={<MdCalendarMonth />}
+              label={`${monthName} Expense`}
+              value={addThousandSeparator(dashboardData.currentMonth.expense)}
+              color="bg-purple-500"
+              loading={loading}
+            />
+          </div>
+        )}
 
         {/* Dashboard Widgets */}
         <div className="grid md:grid-cols-2 gap-6 mt-6">

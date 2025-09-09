@@ -76,7 +76,7 @@ const Home = () => {
                 : 'text-gray-600'
             }`}
           >
-            Overall
+            Overall 
           </button>
           <button
             onClick={() => setView('monthly')}
@@ -86,7 +86,7 @@ const Home = () => {
                 : 'text-gray-600'
             }`}
           >
-            Monthly
+            Current Month
           </button>
         </div>
 

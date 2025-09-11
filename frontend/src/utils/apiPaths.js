@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://backend-2-qwn9.onrender.com';
+export const BASE_URL = 'http://localhost:4001';
 
 export const API_PATHS = {
   AUTH: {
@@ -52,6 +52,16 @@ export const API_PATHS = {
     DELETE_EXPENSE: (expenseId) => `/api/v1/expense/${expenseId}`,
     DOWNLOAD_EXPENSE: "/api/v1/expense/download",
   },
+  RECURRING: {
+    GET_ALL: "/api/v1/recurring-payments",
+    ADD: "/api/v1/recurring-payments",
+    DELETE: (id) => `/api/v1/recurring-payments/${id}`,
+    PAUSE: (id) => `/api/v1/recurring-payments/${id}/pause`,
+    RESUME: (id) => `/api/v1/recurring-payments/${id}/resume`,
+    DASHBOARD: "/api/v1/subscriptions/dashboard",
+    UNDO: "/api/v1/recurring-payments/undo",
+  },
+
 
   IMAGE: {
     UPLOAD_IMAGE: "/api/v1/auth/upload-image",

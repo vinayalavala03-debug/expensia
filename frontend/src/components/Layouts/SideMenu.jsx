@@ -17,6 +17,8 @@ import {
   IndianRupee,
   Briefcase,
   Calculator,
+  Globe,
+  Bell
 } from "lucide-react";
 
 const SideMenu = () => {
@@ -38,6 +40,7 @@ const SideMenu = () => {
         { label: "Income", icon: IndianRupee, path: "/income" },
         { label: "Expense", icon: CreditCard, path: "/expense" },
         { label: "Trips", icon: Briefcase, path: "/dashboard/trips" },
+        { label: "Scheduled Payments", icon: Bell, path: "/subscriptions" },
         { label: "Calculator", icon: Calculator, path: "/calculator" },
       ],
     },
@@ -62,7 +65,7 @@ const SideMenu = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="w-60 h-[calc(100vh-61px)] scroll-smooth bg-white border-r border-gray-200/50 flex flex-col justify-between sticky top-[61px] z-20">
+    <div className="w-62 h-[calc(100vh-61px)] scroll-smooth bg-white border-r border-gray-200/50 flex flex-col justify-between sticky top-[61px] z-20">
       {/* Menu */}
       <div className="p-4 overflow-y-auto">
         {menuSections.map((section, idx) => (

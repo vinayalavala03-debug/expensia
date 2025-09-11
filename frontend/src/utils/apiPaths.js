@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:4001';
+export const BASE_URL = 'https://backend-2-qwn9.onrender.com';
 
 export const API_PATHS = {
   AUTH: {

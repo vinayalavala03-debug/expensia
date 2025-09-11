@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Toaster } from "react-hot-toast";
 import UserProvider from "./context/UserContext";
 import Calculator from "./components/Layouts/Calculator";
-import Help from "./pages/Dashboard/Help";
 
 // Lazy imports
 const Signup = lazy(() => import("./pages/Auth/Signup"));
@@ -13,6 +12,7 @@ const Income = lazy(() => import("./pages/Dashboard/Income"));
 const Expense = lazy(() => import("./pages/Dashboard/Expense"));
 const Trip = lazy(() => import("./pages/Dashboard/Trip"));
 const TripDetails = lazy(() => import("./pages/Dashboard/TripDetails"));
+import RecurringPayments from './pages/Dashboard/RecurringPayments';
 
 const App = () => {
   return (
@@ -31,7 +31,7 @@ const App = () => {
             <Route path="/dashboard/trips" element={<Trip />} />
             <Route path="/dashboard/trips/:id" element={<TripDetails />} />
             <Route path="/calculator" element={<Calculator />} />
-            <Route path="/help" element={<Help />} />
+            <Route path = "/subscriptions" element = {<RecurringPayments />} />
           </Routes>
         </Suspense>
       </Router>

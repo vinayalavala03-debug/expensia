@@ -6,7 +6,7 @@ const SubscriptionOverview = ({ data }) => {
 
   const stats = [
     {
-      label: "Active Subscriptions",
+      label: "Active Payments",
       value: data.totalActive || 0,
       bg: "bg-white",
       text: "text-purple-700",
@@ -42,7 +42,7 @@ const SubscriptionOverview = ({ data }) => {
       {stats.map((stat, idx) => (
         <div
           key={idx}
-          className={`relative rounded-2xl border ${stat.border} ${stat.bg} h-30 w-70 flex flex-col items-center hover:cursor-pointer justify-center text-center`}
+          className={`flex gap-6 bg-white p-6 rounded-2xl shadow-gray-100 border border-gray-200/50  ${stat.border} ${stat.bg} `}
         >
           {/* Icon badge top-left */}
           <div

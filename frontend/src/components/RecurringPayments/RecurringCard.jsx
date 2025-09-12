@@ -30,16 +30,26 @@ const RecurringCard = ({ subscription, onDelete, onToggle, onUndo }) => {
     frequency,
     customInterval = 1,
     startDate,
-    nextDate,
     status,
     lastGenerated,
     lastGeneratedExpenseId,
   } = subscription;
 
+  // Utility to calculate next date
+  function calculateNextDate(frequency, date, interval = 1) {
+    const next = new Date(date);
+    if (frequency === "daily") next.setDate(next.getDate() + interval);
+    else if (frequency === "weekly") next.setDate(next.getDate() + 7 * interval);
+    else if (frequency === "monthly") next.setMonth(next.getMonth() + interval);
+    else if (frequency === "yearly") next.setFullYear(next.getFullYear() + interval);
+    return next;
+  }
+
+  const nextDate = calculateNextDate(frequency, startDate, customInterval);
   const Icon = getIcon(name);
 
   return (
-    <div className="card mt-6">
+    <div className="card mt-6 relative p-4 border rounded-lg shadow bg-white">
       {/* Icon badge */}
       <div className="absolute -top-4 right-4 w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center shadow">
         <Icon size={20} className="text-indigo-600" />

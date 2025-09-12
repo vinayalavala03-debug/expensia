@@ -1,66 +1,53 @@
 // public/service-worker.js
 
-const CACHE_NAME = "app-cache-v2";
+const CACHE_NAME = "static-cache-v1"; // bump version on new deploy
 
-const PRECACHE_ASSETS = ["/", "/index.html", "/offline.html"];
-
-// Install: cache important assets
 self.addEventListener("install", (event) => {
   console.log("SW installed");
-  self.skipWaiting();
-
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-        console.warn("Precaching failed:", err);
-      });
-    })
-  );
+  // Activate new SW immediately
+  event.waitUntil(self.skipWaiting());
 });
 
-// Activate: cleanup old caches
 self.addEventListener("activate", (event) => {
   console.log("SW activated");
+
+  // Cleanup old caches
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.map((key) => key !== CACHE_NAME && caches.delete(key)))
-    )
+      Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch handler
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // 🚫 Skip API & socket requests
+  // 🚫 Skip API & Socket.IO requests
   if (url.pathname.startsWith("/api") || url.pathname.startsWith("/socket.io")) {
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const cachedResponse = await cache.match(event.request);
 
-      return fetch(event.request)
-        .then((response) => {
-          if (!response || response.status !== 200 || response.type !== "basic") {
-            return response;
+      // Try to update cache in background
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(event.request, networkResponse.clone());
           }
-
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
-
-          return response;
+          return networkResponse;
         })
-        .catch(() => {
-          // ✅ Offline fallback
-          if (event.request.mode === "navigate") {
-            return caches.match("/offline.html");
-          }
-        });
+        .catch(() => cachedResponse); // fallback to cache if offline
+
+      return cachedResponse || fetchPromise;
     })
   );
 });

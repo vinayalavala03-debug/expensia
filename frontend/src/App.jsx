@@ -11,6 +11,7 @@ const Home = lazy(() => import("./pages/Dashboard/Home"));
 const Income = lazy(() => import("./pages/Dashboard/Income"));
 const Expense = lazy(() => import("./pages/Dashboard/Expense"));
 const Trip = lazy(() => import("./pages/Dashboard/Trip"));
+const Help = lazy(() => import("./pages/Dashboard/Help"));
 const TripDetails = lazy(() => import("./pages/Dashboard/TripDetails"));
 import RecurringPayments from './pages/Dashboard/RecurringPayments';
 
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/dashboard/trips/:id" element={<TripDetails />} />
             <Route path="/calculator" element={<Calculator />} />
             <Route path = "/subscriptions" element = {<RecurringPayments />} />
+            <Route path = "/help" element = {<Help />} />
           </Routes>
         </Suspense>
       </Router>

@@ -59,7 +59,7 @@ exports.registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Register error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
@@ -104,7 +104,7 @@ exports.loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
@@ -134,7 +134,7 @@ exports.getUserInfo = async (req, res) => {
     });
   } catch (error) {
     console.error("Get user error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });

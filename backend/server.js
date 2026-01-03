@@ -26,7 +26,7 @@ const { connectDB } = require("./config/db.js");
 const app = express();
 const server = http.createServer(app);
 
-/* ───────────────── SECURITY + PERFORMANCE ───────────────── */
+/* ───────── SECURITY + PERFORMANCE ───────── */
 
 app.use(helmet());
 app.use(compression());
@@ -56,16 +56,16 @@ app.use("/api", (req, res, next) => {
   next();
 });
 
-/* ───────────────── BODY PARSING ───────────────── */
+/* ───────── BODY PARSING ───────── */
 
 app.use(express.json({ limit: "15kb" }));
 app.use(express.urlencoded({ extended: true }));
 
-/* ───────────────── DATABASE ───────────────── */
+/* ───────── DATABASE ───────── */
 
 connectDB();
 
-/* ───────────────── ROUTES ───────────────── */
+/* ───────── ROUTES ───────── */
 
 app.get("/", (req, res) => res.send("API is running..."));
 
@@ -77,12 +77,12 @@ app.use("/api/v1/trips", tripRoutes);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-/* ───────────────── SOCKET.IO ───────────────── */
+/* ───────── SOCKET.IO ───────── */
 
 const allowedOrigin = process.env.FRONTEND_URL || "https://expensia.vercel.app";
 
 const io = new SocketIOServer(server, {
-  transports: ["websocket"], // ✅ FORCE WEBSOCKET
+  transports: ["websocket"], // ✅ added (no polling delay)
   cors: {
     origin: allowedOrigin,
     methods: ["GET", "POST"],
@@ -92,7 +92,7 @@ const io = new SocketIOServer(server, {
 // Make io available in controllers
 app.set("io", io);
 
-/* ─────────── SOCKET AUTH (JWT) ─────────── */
+/* ───────── SOCKET AUTH (JWT) ───────── */
 
 io.use((socket, next) => {
   const token =
@@ -117,12 +117,12 @@ io.use((socket, next) => {
   }
 });
 
-/* ─────────── SOCKET EVENTS ─────────── */
+/* ───────── SOCKET EVENTS ───────── */
 
 io.on("connection", (socket) => {
   console.log(`✅ User connected: ${socket.user.id}`);
 
-  /* JOIN TRIP ROOM */
+  // Join trip room
   socket.on("join-trip", async (tripId) => {
     try {
       const trip = await Trip.findById(tripId).select(
@@ -150,11 +150,11 @@ io.on("connection", (socket) => {
     }
   });
 
-  /* SEND MESSAGE (OPTIMIZED & FAST) */
+  // Handle messages (OPTIMIZED, NO DELETION)
   socket.on("trip-message", ({ tripId, message }, ack) => {
     if (!tripId || !message) return;
 
-    // 1️⃣ Emit instantly (Optimistic UI)
+    // 🔹 Emit immediately (fixes delay)
     const tempMessage = {
       _id: Date.now(),
       trip: tripId,
@@ -169,10 +169,10 @@ io.on("connection", (socket) => {
 
     io.to(`trip:${tripId}`).emit("trip-message", tempMessage);
 
-    // ACK to sender
+    // optional ACK
     ack && ack({ delivered: true });
 
-    // 2️⃣ Save asynchronously (NON-BLOCKING)
+    // 🔹 Save message asynchronously (no blocking)
     process.nextTick(async () => {
       try {
         await TripMessage.create({
@@ -181,7 +181,7 @@ io.on("connection", (socket) => {
           message,
         });
       } catch (err) {
-        console.error("Async message save failed:", err);
+        console.error("Trip message save failed:", err);
       }
     });
   });
@@ -191,9 +191,9 @@ io.on("connection", (socket) => {
   });
 });
 
-/* ───────────────── START SERVER ───────────────── */
+/* ───────── START SERVER ───────── */
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });

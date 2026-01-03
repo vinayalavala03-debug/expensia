@@ -66,7 +66,23 @@ export default function TripChat({ tripId }) {
 
     socket.on("trip-message", (msg) => {
       setMessages((prev) => {
-        if (prev.some((m) => m._id === msg._id)) return prev;
+        // 🔁 Replace optimistic message
+        if (msg.clientId) {
+          const index = prev.findIndex(
+            (m) => m.clientId === msg.clientId
+          );
+          if (index !== -1) {
+            const updated = [...prev];
+            updated[index] = msg;
+            return updated;
+          }
+        }
+
+        // 🚫 Prevent duplicates
+        if (prev.some((m) => m._id === msg._id)) {
+          return prev;
+        }
+
         return [...prev, msg];
       });
     });
@@ -76,16 +92,17 @@ export default function TripChat({ tripId }) {
     };
   }, [tripId, apiBase, token]);
 
-  /* ─────────── SEND MESSAGE (FAST) ─────────── */
+  /* ─────────── SEND MESSAGE (FIXED) ─────────── */
   const sendMessage = () => {
     const text = input.trim();
     if (!text || !socketRef.current) return;
 
-    const tempId = `temp-${Date.now()}`;
+    const clientId = `client-${Date.now()}`;
 
-    // 1️⃣ Optimistic UI update
+    // Optimistic message
     const optimisticMessage = {
-      _id: tempId,
+      _id: clientId,
+      clientId,
       message: text,
       user: { _id: currentUserId },
       createdAt: new Date().toISOString(),
@@ -95,14 +112,11 @@ export default function TripChat({ tripId }) {
     setMessages((prev) => [...prev, optimisticMessage]);
     setInput("");
 
-    // 2️⃣ Emit via socket with ACK
-    socketRef.current.emit(
-      "trip-message",
-      { tripId, message: text },
-      () => {
-        // ACK received → nothing to do (server will re-emit real message)
-      }
-    );
+    socketRef.current.emit("trip-message", {
+      tripId,
+      message: text,
+      clientId,
+    });
   };
 
   const onKeyDown = (e) => {

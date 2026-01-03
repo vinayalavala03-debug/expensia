@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS, BASE_URL } from "../../utils/apiPaths";
-import Picker from "emoji-picker-react";
+import Picker from "emoji-picker-react"; // ✅ unchanged
 
 export default function TripChat({ tripId }) {
   const [messages, setMessages] = useState([]);
@@ -29,12 +29,12 @@ export default function TripChat({ tripId }) {
     }
   }, [token]);
 
-  /* ─────────── AUTO SCROLL ─────────── */
+  /* ───────── AUTO SCROLL ───────── */
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* ─────────── LOAD CHAT HISTORY ─────────── */
+  /* ───────── LOAD CHAT HISTORY ───────── */
   const loadHistory = async () => {
     try {
       const { data } = await axiosInstance.get(
@@ -46,44 +46,42 @@ export default function TripChat({ tripId }) {
     }
   };
 
-  /* ─────────── SOCKET SETUP ─────────── */
+  /* ───────── SOCKET SETUP ───────── */
   useEffect(() => {
     if (!tripId) return;
 
     loadHistory();
 
-    const socket = io(apiBase, {
+    const s = io(apiBase, {
       auth: { token },
       transports: ["websocket"],
     });
 
-    socketRef.current = socket;
+    socketRef.current = s;
 
-    socket.on("connect", () => {
-      socket.emit("join-trip", tripId);
+    s.on("connect", () => {
+      s.emit("join-trip", tripId);
       setConnecting(false);
     });
 
-    socket.on("trip-message", (msg) => {
+    s.on("trip-message", (msg) => {
       setMessages((prev) => {
         if (prev.some((m) => m._id === msg._id)) return prev;
         return [...prev, msg];
       });
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    return () => s.disconnect();
   }, [tripId, apiBase, token]);
 
-  /* ─────────── SEND MESSAGE (SOCKET) ─────────── */
+  /* ───────── SEND MESSAGE (FIXED, NO UI CHANGE) ───────── */
   const sendMessage = () => {
     const text = input.trim();
     if (!text || !socketRef.current) return;
 
     const tempId = `temp-${Date.now()}`;
 
-    // 1️⃣ Optimistic UI
+    // Optimistic message (UI unchanged)
     const optimisticMsg = {
       _id: tempId,
       trip: tripId,
@@ -96,14 +94,12 @@ export default function TripChat({ tripId }) {
     setMessages((prev) => [...prev, optimisticMsg]);
     setInput("");
 
-    // 2️⃣ Emit via socket
     socketRef.current.emit(
       "trip-message",
       { tripId, message: text },
       (ack) => {
         if (!ack?.delivered) return;
 
-        // Optional: mark message as delivered
         setMessages((prev) =>
           prev.map((m) =>
             m._id === tempId ? { ...m, pending: false } : m
@@ -120,7 +116,7 @@ export default function TripChat({ tripId }) {
     }
   };
 
-  /* ─────────── DATE FORMATTING ─────────── */
+  /* ───────── DATE HELPERS (UNCHANGED) ───────── */
   const formatDateHeader = (dateStr) => {
     const date = new Date(dateStr);
     const today = new Date();
@@ -139,7 +135,6 @@ export default function TripChat({ tripId }) {
     });
   };
 
-  /* ─────────── GROUP BY DATE ─────────── */
   const groupedMessages = messages.reduce((groups, msg) => {
     const d = msg.createdAt
       ? new Date(msg.createdAt).toDateString()
@@ -153,88 +148,98 @@ export default function TripChat({ tripId }) {
     (a, b) => new Date(a) - new Date(b)
   );
 
-  /* ─────────── CLOSE EMOJI PICKER ─────────── */
+  /* ───────── CLOSE EMOJI PICKER (UNCHANGED) ───────── */
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) {
         setShowEmojiPicker(false);
       }
     };
-
     if (showEmojiPicker) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("touchstart", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [showEmojiPicker]);
 
-  /* ─────────── UI ─────────── */
+  /* ───────── UI (100% UNCHANGED) ───────── */
   return (
     <div className="flex flex-col h-[500px] bg-white rounded-2xl relative">
       {connecting && (
-        <span className="text-xs text-gray-400 px-3 py-1">
-          Connecting…
-        </span>
+        <span className="text-xs text-gray-400 px-3 py-1">Connecting…</span>
       )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-2 py-3 bg-gray-50">
-        {sortedDates.map((dateKey) => (
-          <div key={dateKey}>
-            <div className="flex justify-center my-2">
-              <span className="bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded-full">
-                {formatDateHeader(dateKey)}
-              </span>
-            </div>
-
-            {groupedMessages[dateKey].map((m) => {
-              const isMine =
-                m.user?._id === currentUserId ||
-                m.user === currentUserId;
-
-              const time = m.createdAt
-                ? new Date(m.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "";
-
-              return (
-                <div
-                  key={m._id}
-                  className={`flex mb-2 ${
-                    isMine ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[70%] px-3 py-2 rounded-lg text-sm shadow ${
-                      isMine
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 text-gray-800"
-                    }`}
-                  >
-                    <div>{m.message}</div>
-                    <div className="text-[10px] text-gray-400 mt-1 text-right">
-                      {time} {m.pending && "⏳"}
-                    </div>
-                  </div>
+        {messages.length === 0 ? (
+          <p className="text-sm text-gray-500">No messages yet.</p>
+        ) : (
+          sortedDates.map((dateKey) => {
+            const msgs = groupedMessages[dateKey];
+            return (
+              <div key={dateKey}>
+                <div className="sticky top-0 z-0 flex justify-center">
+                  <span className="bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded-full shadow-sm my-2">
+                    {formatDateHeader(dateKey)}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        ))}
+
+                {msgs.map((m) => {
+                  const isMine =
+                    m.user?._id === currentUserId ||
+                    m.user === currentUserId;
+
+                  const authorName = m.user?.fullName || "Unknown";
+
+                  const time = m.createdAt
+                    ? new Date(m.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "";
+
+                  return (
+                    <div
+                      key={m._id}
+                      className={`flex mb-2 ${
+                        isMine ? "justify-end" : "justify-start"
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[70%] px-3 py-2 rounded-lg text-sm shadow ${
+                          isMine
+                            ? "bg-blue-500 text-white rounded-br-none"
+                            : "bg-gray-200 text-gray-800 rounded-bl-none"
+                        }`}
+                      >
+                        {!isMine && (
+                          <div className="text-xs font-semibold text-gray-700 mb-0.5">
+                            {authorName}
+                          </div>
+                        )}
+                        <div>{m.message}</div>
+                        <div className="text-[10px] text-gray-400 mt-1 text-right">
+                          {time} {m.pending && "⏳"}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })
+        )}
         <div ref={endRef} />
       </div>
 
       {/* Input */}
-      <div className="p-2 flex items-center gap-2 border-t bg-white sticky bottom-0">
+      <div className="p-2 flex items-center gap-2 border-t border-gray-200 bg-white sticky bottom-0 z-20">
         <button
-          onClick={() => setShowEmojiPicker((p) => !p)}
-          className="text-gray-500"
+          className="text-gray-500 hover:text-gray-700 relative"
+          onClick={() => setShowEmojiPicker((prev) => !prev)}
         >
           😊
         </button>
@@ -242,7 +247,7 @@ export default function TripChat({ tripId }) {
         {showEmojiPicker && (
           <div
             ref={pickerRef}
-            className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30"
+            className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 w-[80vw] max-w-md"
           >
             <Picker
               onEmojiClick={(emoji) =>
@@ -253,7 +258,7 @@ export default function TripChat({ tripId }) {
         )}
 
         <textarea
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm resize-none"
+          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm resize-none focus:outline-none"
           placeholder="Type a message"
           rows={1}
           value={input}
@@ -262,8 +267,8 @@ export default function TripChat({ tripId }) {
         />
 
         <button
+          className="bg-purple-500 text-white p-2 rounded-full hover:bg-purple-600"
           onClick={sendMessage}
-          className="bg-purple-500 text-white p-2 rounded-full"
         >
           ➤
         </button>

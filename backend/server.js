@@ -26,35 +26,47 @@ const { connectDB } = require("./config/db.js");
 const app = express();
 const server = http.createServer(app);
 
-// --- Security + Performance ---
-app.use(helmet()); // ✅ Secure headers
-app.use(compression()); // ✅ Gzip compression for smaller payloads
+/* ───────────────── SECURITY + PERFORMANCE ───────────────── */
+
+app.use(helmet());
+app.use(compression());
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://expensia-xi.vercel.app",
+    origin: process.env.FRONTEND_URL || "https://expensia.vercel.app",
     credentials: true,
   })
 );
 
-// ✅ Rate limiting to protect API
 app.use(
   "/api",
   rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     standardHeaders: true,
     legacyHeaders: false,
   })
 );
 
-// --- Body parsing ---
+// Disable caching for APIs
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  next();
+});
+
+/* ───────────────── BODY PARSING ───────────────── */
+
 app.use(express.json({ limit: "15kb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// --- DB ---
+/* ───────────────── DATABASE ───────────────── */
+
 connectDB();
 
-// --- Routes ---
+/* ───────────────── ROUTES ───────────────── */
+
 app.get("/", (req, res) => res.send("API is running..."));
 
 app.use("/api/v1/auth", authRoutes);
@@ -65,16 +77,23 @@ app.use("/api/v1/trips", tripRoutes);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// --- Socket.IO ---
-const allowedOrigin = process.env.FRONTEND_URL || "https://expensia-xi.vercel.app";
+/* ───────────────── SOCKET.IO ───────────────── */
+
+const allowedOrigin = process.env.FRONTEND_URL || "https://expensia.vercel.app";
+
 const io = new SocketIOServer(server, {
-  cors: { origin: allowedOrigin, methods: ["GET", "POST"] },
+  transports: ["websocket"], // ✅ FORCE WEBSOCKET
+  cors: {
+    origin: allowedOrigin,
+    methods: ["GET", "POST"],
+  },
 });
 
-// ✅ Make io available inside controllers
+// Make io available in controllers
 app.set("io", io);
 
-// --- Middleware: Verify JWT ---
+/* ─────────── SOCKET AUTH (JWT) ─────────── */
+
 io.use((socket, next) => {
   const token =
     socket.handshake.auth?.token ||
@@ -84,7 +103,13 @@ io.use((socket, next) => {
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    socket.user = { id: payload.id || payload._id };
+
+    socket.user = {
+      id: payload.id || payload._id,
+      fullName: payload.fullName || "User",
+      email: payload.email,
+    };
+
     next();
   } catch (err) {
     console.error("Socket auth failed:", err.message);
@@ -92,21 +117,28 @@ io.use((socket, next) => {
   }
 });
 
-// --- Socket.IO Events ---
+/* ─────────── SOCKET EVENTS ─────────── */
+
 io.on("connection", (socket) => {
   console.log(`✅ User connected: ${socket.user.id}`);
 
-  // Join trip room
+  /* JOIN TRIP ROOM */
   socket.on("join-trip", async (tripId) => {
     try {
-      const trip = await Trip.findById(tripId).select("userId participants visibility");
+      const trip = await Trip.findById(tripId).select(
+        "userId participants visibility"
+      );
+
       if (!trip) return socket.emit("error", "Trip not found");
 
       const uid = String(socket.user.id);
       const isCreator = String(trip.userId) === uid;
       const isParticipant = trip.participants.map(String).includes(uid);
 
-      if ((trip.visibility === "private" && !isCreator) || (!isCreator && !isParticipant)) {
+      if (
+        (trip.visibility === "private" && !isCreator) ||
+        (!isCreator && !isParticipant)
+      ) {
         return socket.emit("error", "Access denied");
       }
 
@@ -118,26 +150,40 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Handle messages
-  socket.on("trip-message", async ({ tripId, message }) => {
+  /* SEND MESSAGE (OPTIMIZED & FAST) */
+  socket.on("trip-message", ({ tripId, message }, ack) => {
     if (!tripId || !message) return;
 
-    try {
-      // Save message to DB
-      const msg = await TripMessage.create({
-        trip: tripId,
-        user: socket.user.id,
-        message,
-      });
+    // 1️⃣ Emit instantly (Optimistic UI)
+    const tempMessage = {
+      _id: Date.now(),
+      trip: tripId,
+      message,
+      user: {
+        _id: socket.user.id,
+        fullName: socket.user.fullName,
+      },
+      createdAt: new Date(),
+      pending: true,
+    };
 
-      const populated = await msg.populate("user", "fullName email");
+    io.to(`trip:${tripId}`).emit("trip-message", tempMessage);
 
-      // Broadcast to room
-      io.to(`trip:${tripId}`).emit("trip-message", populated);
-    } catch (err) {
-      console.error("Trip message error:", err);
-      socket.emit("error", "Message not sent");
-    }
+    // ACK to sender
+    ack && ack({ delivered: true });
+
+    // 2️⃣ Save asynchronously (NON-BLOCKING)
+    process.nextTick(async () => {
+      try {
+        await TripMessage.create({
+          trip: tripId,
+          user: socket.user.id,
+          message,
+        });
+      } catch (err) {
+        console.error("Async message save failed:", err);
+      }
+    });
   });
 
   socket.on("disconnect", () => {
@@ -145,8 +191,9 @@ io.on("connection", (socket) => {
   });
 });
 
-// --- Start server ---
+/* ───────────────── START SERVER ───────────────── */
+
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
